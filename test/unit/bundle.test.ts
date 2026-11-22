@@ -13,7 +13,7 @@ describe('bundled extension', () => {
       console.log('ok');
     `;
     const result = spawnSync(process.execPath, ['-e', script], {
-      env: { ...process.env, NODE_PATH: path.join(root, 'test/stubs/node_modules') },
+      env: { ...process.env, NODE_PATH: path.join(root, 'test/stubs/cjs') },
       encoding: 'utf8',
     });
     expect(result.stderr).toBe('');
