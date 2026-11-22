@@ -93,15 +93,17 @@ tens of milliseconds.
   `path.win32` (drive letters, reserved names, case-insensitive collisions).
 * **Performance**: a 5,000-note test asserts load/search/group/task timings.
 * **Integration (`@vscode/test-electron`)**: real extension host, real files: create/open/search, private
-  paths, tasks, encryption key, then a second launch that verifies notes, colors, pins and the secret key
-  survive a restart, then a 5,000-note performance phase.
+  paths, tasks, encryption key, then a second launch that verifies notes, colors, pins and (where the OS
+  keyring is persistent) the secret key survive a restart, then a 5,000-note performance phase. Run with
+  `VSCODE_EXECUTABLE=/path/to/code npm run test:integration` to reuse an installed VS Code.
 * **Fixtures**: `npm run fixtures` regenerates `spec/`; `npm run fixtures:check` fails CI when stale.
 
 ## Known limitations
 
 * Only the VS Code extension is implemented here. The JetBrains plugin is expected to implement
   `spec/FORMAT.md`; the companion zip ships the spec, fixtures, templates and the MCP server for that work.
-* The VS Code integration tests need a graphical session (use `xvfb-run` on headless Linux); they cannot
-  run in this repository's plain shell environment.
+* The VS Code integration tests need a graphical session (use `xvfb-run` on headless Linux). On Linux
+  without a keyring, SecretStorage is per-window, so the restart test skips only the key-persistence
+  assertion (verified by a canary secret) and still checks notes, colors and pins.
 * Screenshots for the marketplace are generated previews (`images/walkthrough-*.svg`); real screenshots
   must be captured on Windows/macOS before publishing (see `docs/publishing-checklist.md`).

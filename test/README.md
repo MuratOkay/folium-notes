@@ -20,7 +20,7 @@ real VS Code▶ test/integration/**         @vscode/test-electron (first/restart
 | `npm run test:unit` | unit files only (no perf timings) |
 | `npm run test:win` | the Windows path simulation (`test/unit/windows.test.ts`, uses `path.win32`) |
 | `npm run test:perf` | the 5,000-note perf test with its measured numbers |
-| `npm run test:integration` | builds, then runs the extension inside a real VS Code (needs a display or `xvfb-run`) |
+| `npm run test:integration` | builds, then runs the extension inside a real VS Code (needs a display or `xvfb-run`; set `VSCODE_EXECUTABLE=/path/to/code` to reuse an installed VS Code) |
 | `npm run verify` | typecheck + unit tests + stale-fixture check (what CI runs) |
 | `npm run fixtures:check` | fails when `spec/fixtures` no longer matches the TS core |
 
@@ -63,4 +63,7 @@ real VS Code▶ test/integration/**         @vscode/test-electron (first/restart
 * The MCP test builds its own temporary bundle from `src/mcp/server.ts`, so it does not depend on `dist/`.
 * `bundle.test.ts` builds `dist/extension.js` and `dist/mcp-server.js` on demand (with the same esbuild
   options as `esbuild.mjs`), so it also works in a fresh clone; `npm run verify` builds before testing.
-* Integration tests are not part of `npm test` because they need a graphical session and download VS Code.
+* Integration tests are not part of `npm test` because they need a graphical session (and either download VS
+  Code or use `VSCODE_EXECUTABLE`). On Linux without an OS keyring, the restart phase detects that
+  SecretStorage is not persistent (canary secret) and skips only the key-persistence assertion; notes,
+  colors and pins are still asserted.
