@@ -655,29 +655,32 @@ class MissingLinkActions implements vscode.CodeActionProvider {
       const data = (diagnostic as vscode.Diagnostic & { data?: unknown }).data as
         | { foliumKind?: string; target?: string; noteScope?: 'shared' | 'private' }
         | undefined;
-      if (diagnostic.code !== 'missing' || !data?.target) continue;
-      const scope = data.noteScope === 'private' ? 'private' : 'shared';
+      if (diagnostic.code !== 'missing') continue;
+      const fromMessage = /Missing note: \[\[(.+?)\]\]/.exec(diagnostic.message)?.[1];
+      const target = data?.target ?? fromMessage;
+      if (!target) continue;
+      const scope = data?.noteScope === 'private' ? 'private' : 'shared';
       const action = new vscode.CodeAction(
-        `Create ${scope} note "${data.target}"`,
+        `Create ${scope} note "${target}"`,
         vscode.CodeActionKind.QuickFix,
       );
       action.diagnostics = [diagnostic];
       action.command = {
         command: 'folium.createMissingNote',
         title: 'Create note',
-        arguments: [data.target, scope],
+        arguments: [target, scope],
       };
       actions.push(action);
       if (scope === 'shared') {
         const privateAction = new vscode.CodeAction(
-          `Create private note "${data.target}"`,
+          `Create private note "${target}"`,
           vscode.CodeActionKind.QuickFix,
         );
         privateAction.diagnostics = [diagnostic];
         privateAction.command = {
           command: 'folium.createMissingNote',
           title: 'Create private note',
-          arguments: [data.target, 'private'],
+          arguments: [target, 'private'],
         };
         actions.push(privateAction);
       }

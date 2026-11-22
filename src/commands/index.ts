@@ -72,7 +72,10 @@ export function registerCommands(app: FoliumApp): void {
   register('folium.duplicateNote', async () => notes.duplicateNote(app));
   register('folium.moveNote', async () => notes.moveNoteScope(app));
   register('folium.editTags', async () => notes.editNoteTags(app));
-  register('folium.restoreTrash', async () => notes.restoreTrashEntry(app));
+  register('folium.restoreTrash', async (arg: unknown) => {
+    const entry = arg && typeof arg === 'object' && 'entry' in arg ? (arg as { entry: { storedName: string } }).entry : undefined;
+    await notes.restoreTrashEntry(app, entry);
+  });
   register('folium.deleteTrashEntry', async (arg: unknown) => {
     const entry = arg && typeof arg === 'object' && 'entry' in arg ? (arg as { entry: { storedName: string } }).entry : undefined;
     await notes.deleteTrashEntry(app, entry);

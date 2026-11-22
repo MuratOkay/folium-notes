@@ -433,12 +433,23 @@ export async function trashNote(app: FoliumApp, note?: NoteFile): Promise<void> 
   app.refresh();
 }
 
-export async function restoreTrashEntry(app: FoliumApp): Promise<void> {
+export async function restoreTrashEntry(
+  app: FoliumApp,
+  entry?: { storedName: string },
+): Promise<void> {
   const store = app.store;
   if (!store) return;
   const entries = store.trashEntries;
   if (entries.length === 0) {
     void vscode.window.showInformationMessage('Folium: the trash is empty.');
+    return;
+  }
+  if (entry) {
+    const full = entries.find((candidate) => candidate.storedName === entry.storedName);
+    if (!full) return;
+    const restoredDirect = await store.restoreTrashEntry(full);
+    app.refresh();
+    if (restoredDirect) await app.openNote(restoredDirect);
     return;
   }
   const picked = await vscode.window.showQuickPick(
