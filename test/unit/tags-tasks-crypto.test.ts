@@ -236,3 +236,50 @@ describe('tar and backup', () => {
     expect(plan.skipped).toEqual(['../evil.md']);
   });
 });
+
+describe('tar interoperability', () => {
+  const hasTar = (() => {
+    try {
+      require('node:child_process').execFileSync('tar', ['--version'], { stdio: 'ignore' });
+      return true;
+    } catch {
+      return false;
+    }
+  })();
+
+  it.skipIf(!hasTar)('writes archives GNU tar can read (long names included)', async () => {
+    const { execFileSync } = require('node:child_process');
+    const fsMod = require('node:fs');
+    const osMod = require('node:os');
+    const pathMod = require('node:path');
+    const dir = fsMod.mkdtempSync(pathMod.join(osMod.tmpdir(), 'folium-tar-'));
+    const longName = `${'deep/'.repeat(30)}note.md`;
+    const file = pathMod.join(dir, 'backup.tar');
+    fsMod.writeFileSync(
+      file,
+      writeTar([
+        { name: 'Folium-backup.json', type: 'file', data: Buffer.from('{}'), mode: 0o644, mtime: 1 },
+        { name: longName, type: 'file', data: Buffer.from('long'), mode: 0o644, mtime: 1 },
+      ]),
+    );
+    const listing = execFileSync('tar', ['-tf', file], { encoding: 'utf8' });
+    expect(listing.trim().split('\n')).toEqual(['Folium-backup.json', longName]);
+    fsMod.rmSync(dir, { recursive: true, force: true });
+  });
+
+  it.skipIf(!hasTar)('reads archives created by GNU tar', async () => {
+    const { execFileSync } = require('node:child_process');
+    const fsMod = require('node:fs');
+    const osMod = require('node:os');
+    const pathMod = require('node:path');
+    const dir = fsMod.mkdtempSync(pathMod.join(osMod.tmpdir(), 'folium-tar-src-'));
+    fsMod.mkdirSync(pathMod.join(dir, 'a'), { recursive: true });
+    fsMod.writeFileSync(pathMod.join(dir, 'a', 'b.md'), 'hi');
+    const file = pathMod.join(dir, 'gnu.tar');
+    execFileSync('tar', ['-cf', file, '-C', dir, 'a']);
+    const entries = readTar(fsMod.readFileSync(file));
+    expect(entries.map((entry) => entry.name)).toContain('a/b.md');
+    expect(entries.find((entry) => entry.name === 'a/b.md')?.data.toString()).toBe('hi');
+    fsMod.rmSync(dir, { recursive: true, force: true });
+  });
+});

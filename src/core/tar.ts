@@ -15,10 +15,11 @@ function octal(value: number, length: number): string {
   return `${text.padStart(length - 1, '0')}\0`;
 }
 
-function checksum(header: Buffer): number {
+function setChecksum(header: Buffer): void {
+  header.write('        ', 148, 8, 'ascii');
   let sum = 0;
-  for (let i = 0; i < BLOCK; i++) sum += i >= 148 && i < 156 ? 32 : header[i];
-  return sum;
+  for (let i = 0; i < BLOCK; i++) sum += header[i];
+  header.write(`${sum.toString(8).padStart(6, '0')}\0 `, 148, 8, 'ascii');
 }
 
 function headerFor(entry: TarEntry, name: string): Buffer {
@@ -33,8 +34,7 @@ function headerFor(entry: TarEntry, name: string): Buffer {
   header.write(entry.type === 'directory' ? '5' : entry.type === 'symlink' ? '2' : '0', 156, 1, 'ascii');
   header.write('ustar\0', 257, 6, 'ascii');
   header.write('00', 263, 2, 'ascii');
-  const sum = checksum(header);
-  header.write(`${sum.toString(8).padStart(6, '0')}\0 `, 148, 8, 'ascii');
+  setChecksum(header);
   return header;
 }
 
@@ -46,6 +46,7 @@ function longNameEntry(name: string, mtime: number): Buffer {
   const data = Buffer.from(`${name}\0`, 'utf8');
   const header = headerFor({ name: '././@LongLink', data, mode: 0o644, mtime, type: 'other' }, '././@LongLink');
   header.write('L', 156, 1, 'ascii');
+  setChecksum(header);
   const padded = Buffer.alloc(Math.ceil(data.length / BLOCK) * BLOCK, 0);
   data.copy(padded);
   return Buffer.concat([header, padded]);
@@ -58,7 +59,7 @@ export function writeTar(entries: TarEntry[]): Buffer {
     const name = entry.name.replace(/\\/g, '/').replace(/^\/+/, '');
     const mtime = entry.mtime || Math.floor(Date.now() / 1000);
     if (needsLongName(name)) chunks.push(longNameEntry(name, mtime));
-    const short = needsLongName(name) ? name.slice(-100) : name;
+    const short = needsLongName(name) ? name.slice(0, 100) : name;
     chunks.push(headerFor({ ...entry, mtime }, short));
     if (entry.type !== 'directory') {
       const padded = Buffer.alloc(Math.ceil(entry.data.length / BLOCK) * BLOCK, 0);
