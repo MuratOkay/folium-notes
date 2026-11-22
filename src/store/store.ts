@@ -147,6 +147,8 @@ export class FoliumStore {
   private writeTimes = new Map<string, number>();
   private tasksCache: TaskItem[] = [];
   private tagsCache: Map<string, number> = new Map();
+  private taskCacheByNote = new Map<string, { version: string; tasks: TaskItem[] }>();
+  private tagCacheByNote = new Map<string, { version: string; tags: string[] }>();
   private readonly now: () => Date;
   private readonly newId: () => string;
   ready = false;
@@ -224,8 +226,11 @@ export class FoliumStore {
     await fs.writeFile(this.paths.projectJsonFile, expected, 'utf8').catch(() => undefined);
   }
 
-  /** Re-read every note from disk (watchers call this after external changes). */
-  async refresh(): Promise<void> {
+  /**
+   * Re-read notes from disk. Unchanged files are reused (stat only), so a refresh after
+   * one external edit costs a directory walk + stats instead of re-parsing every note.
+   */
+  async refresh(options: { full?: boolean } = {}): Promise<void> {
     const files: Array<{ abs: string; root: string; scope: Scope }> = [];
     for (const [root, scope] of [
       [this.paths.sharedRoot, 'shared'],
@@ -235,16 +240,30 @@ export class FoliumStore {
       for (const abs of found) files.push({ abs, root, scope });
     }
     const errors: string[] = [];
+    const seen = new Set<string>();
     const loaded = await mapLimit(files, 32, async (file) => {
+      const abs = path.resolve(file.abs);
+      seen.add(abs);
+      const existing = this.notesByPath.get(abs);
+      if (!options.full && existing && !this.overlay.has(abs)) {
+        const stat = await fs.stat(abs).catch(() => undefined);
+        if (stat && stat.isFile() && stat.mtimeMs === existing.mtime && stat.size === existing.size) {
+          return existing;
+        }
+      }
       try {
-        return await this.loadNote(file.abs, file.root, file.scope);
+        return await this.loadNote(abs, file.root, file.scope);
       } catch (error) {
-        errors.push(`${file.abs}: ${error instanceof Error ? error.message : String(error)}`);
+        errors.push(`${abs}: ${error instanceof Error ? error.message : String(error)}`);
         return undefined;
       }
     });
-    this.notesByPath = new Map();
-    for (const note of loaded) if (note) this.notesByPath.set(note.absPath, note);
+    const next = new Map<string, NoteFile>();
+    for (const note of loaded) if (note) next.set(note.absPath, note);
+    for (const abs of [...this.notesByPath.keys()]) {
+      if (!seen.has(abs)) this.writeTimes.delete(abs);
+    }
+    this.notesByPath = next;
     this.scanErrors = errors;
     this.reindex();
   }
@@ -311,6 +330,15 @@ export class FoliumStore {
       pinned: personal?.pinned === true,
       tasks,
     });
+    // Prime the per-note caches so reindex() does not parse the same note twice.
+    const version = `${mtime}:${size}:${summary.title}`;
+    this.taskCacheByNote.set(summary.key, { version, tasks });
+    if (!summary.archived) {
+      this.tagCacheByNote.set(summary.key, {
+        version,
+        tags: collectTags(parsed.meta.tags, parsed.body, this.settings.inlineTags),
+      });
+    }
     return { ...summary, raw };
   }
 
@@ -338,22 +366,47 @@ export class FoliumStore {
       })),
     );
     const tasks: TaskItem[] = [];
+    const tagLists: string[][] = [];
+    const seen = new Set<string>();
     for (const note of notes) {
-      if (note.encrypted) continue;
-      tasks.push(
-        ...parseTasks(note.raw, {
-          noteKey: note.key,
-          noteTitle: note.title,
-          scope: note.scope,
-          relPath: note.relPath,
-        }),
-      );
+      const version = `${note.mtime}:${note.size}:${note.title}`;
+      seen.add(note.key);
+      let taskEntry = this.taskCacheByNote.get(note.key);
+      if (!taskEntry || taskEntry.version !== version) {
+        taskEntry = {
+          version,
+          tasks: note.encrypted
+            ? []
+            : parseTasks(note.raw, {
+                noteKey: note.key,
+                noteTitle: note.title,
+                scope: note.scope,
+                relPath: note.relPath,
+              }),
+        };
+        this.taskCacheByNote.set(note.key, taskEntry);
+      }
+      tasks.push(...taskEntry.tasks);
+      let tagEntry = this.tagCacheByNote.get(note.key);
+      if (!tagEntry || tagEntry.version !== version) {
+        tagEntry = {
+          version,
+          tags: isArchived(note.meta)
+            ? []
+            : collectTags(note.meta.tags, note.body, this.settings.inlineTags),
+        };
+        this.tagCacheByNote.set(note.key, tagEntry);
+      }
+      if (!note.archived && tagEntry.tags.length > 0) tagLists.push(tagEntry.tags);
+    }
+    for (const key of [...this.taskCacheByNote.keys()]) {
+      if (!seen.has(key)) this.taskCacheByNote.delete(key);
+    }
+    for (const key of [...this.tagCacheByNote.keys()]) {
+      if (!seen.has(key)) this.tagCacheByNote.delete(key);
     }
     this.tasksCache = tasks;
-    const active = notes.filter((note) => !isArchived(note.meta));
-    this.tagsCache = countTags(
-      active.map((note) => collectTags(note.meta.tags, note.body, this.settings.inlineTags)),
-    );
+    this.tagsCache = countTags(tagLists);
   }
 
   get allNotes(): NoteFile[] {

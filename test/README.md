@@ -51,7 +51,10 @@ real VS Code▶ test/integration/**         @vscode/test-electron (first/restart
   `tools/call`, both stdio framings (newline and `Content-Length`) and the 200 KB cap.
 * `unit/windows.test.ts` — drive letters, reserved device names, case-insensitive collisions, win32
   relative paths, all with `path.win32` so it runs on every OS.
-* `perf/perf.test.ts` — builds 5,000 notes and asserts load/index/search/group/task timings.
+* `perf/perf.test.ts` — core-level 5,000-note timings (parse/index/search/group/tasks).
+* `perf/store.test.ts` — store-level stress test on a real temporary folder: seeds 5,000 Markdown files and
+  prints cold load + index, search, cached tags/tasks, incremental refresh (no change / one changed file /
+  own write) and note creation. Also asserts upper bounds.
 * `integration/` — `run.mjs` prepares a temporary workspace (5,000 seeded notes for the perf phase) and
   launches VS Code three times: `first` (create/open/search/encryption key), `restart` (notes, colors,
   pins and the secret key survive), `perf` (extension-host timings).

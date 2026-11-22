@@ -49,15 +49,21 @@ personal state to the new key and rewrite wiki links when enabled.
 ## Performance
 
 * Scan is parallel (32 concurrent reads) and only reads `.md` files below the two roots.
+* **Refreshes are incremental**: the directory walk is followed by a `stat` per file, and unchanged notes
+  (same mtime/size, no unsaved overlay) reuse the existing parsed object. One external edit therefore
+  costs a walk + stats + one parse instead of re-reading and re-parsing 5,000 notes.
+* Per-note task and tag caches are primed during the scan and reused by the indexer, so no note is parsed
+  twice per change; `tagCounts()`/`tasks` are O(1) reads of the cached values.
 * Search keeps per-note lower-cased title/body and token lists, reusing entries whose `mtime:size:title`
   signature is unchanged. Fuzzy matching only runs when substring/prefix matching fails.
-* Views compute groups from the already-filtered array; grouping a tag tree of 5,000 notes is a few
-tens of milliseconds.
-* The measured numbers on the development machine (Node 26, one core): load/parse 5,000 notes ~0.6 s,
-  index ~21 ms, search ~18 ms, tag grouping ~47 ms, task extraction ~24 ms. The perf test asserts generous
-  upper bounds so it fails only on real regressions.
-* The VS Code integration perf phase additionally measures a full refresh in the extension host and note
-  creation latency.
+* Views memoize filtered notes/groups per refresh and compute grouping from the already-filtered array.
+* Measured on the development machine (Linux, Node 26, 5,000 generated notes):
+  cold load + index **≈1.7 s**, search **16–45 ms**, cached tags/tasks **≈0 ms**, refresh with no changes
+  **≈150 ms**, refresh after one external edit **≈150 ms**, note creation **≈35 ms**. Before incremental
+  refresh the same refresh took **≈1.3 s**. The VS Code extension-host perf phase measures
+  **refresh 164 ms, search 29 ms, create 28 ms** for the same 5,000 notes.
+* `test/perf/store.test.ts` prints these numbers on every run and asserts generous upper bounds so it
+  fails only on real regressions.
 
 ## Format decisions
 

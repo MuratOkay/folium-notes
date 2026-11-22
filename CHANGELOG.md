@@ -34,5 +34,7 @@ First pre-release of Folium Notes for VS Code.
 * Remote-window notices, getting-started walkthrough, status bar, keyboard shortcuts and 40+ settings.
 * Manifest contributions pass the current VS Code extension schema: every view has an icon and walkthrough
   media no longer uses the unsupported `alt` property; the codebase has no unused imports or locals.
-* 150+ unit tests (including a Windows path simulation and a 5,000-note performance test), extension-host
+* Incremental store refresh (stat-based reuse) and per-note task/tag caches: a 5,000-note refresh dropped
+  from ~1.3 s to ~150 ms (164 ms in the VS Code extension host).
+* 180+ unit tests (including a Windows path simulation and a 5,000-note performance test), extension-host
   integration tests with a restart phase, and generated `spec/` fixtures that CI keeps fresh.
