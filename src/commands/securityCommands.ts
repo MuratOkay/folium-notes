@@ -6,7 +6,7 @@ import path from 'node:path';
 import type { FoliumApp } from '../app';
 import { activeNote, confirmDanger, pickNote } from './util';
 import { decryptNote, fingerprint } from '../core/crypto';
-import { secureUri, SECURE_SCHEME, secureTargetPath } from '../ui/secureFs';
+import { SECURE_SCHEME, secureTargetPath } from '../ui/secureFs';
 import { defaultViewState } from '../ui/viewState';
 
 export async function encryptActiveNote(app: FoliumApp): Promise<void> {

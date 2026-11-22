@@ -7,12 +7,10 @@ import type { FoliumApp } from '../app';
 import { askTitle, activeNote, confirmDanger, pickNote, pickScope } from './util';
 import type { NoteFile } from '../store/store';
 import type { Scope } from '../core/state';
-import { COLORS, normalizeColor, type Color } from '../core/colors';
+import { COLORS, type Color } from '../core/colors';
 import { parseNote } from '../core/frontmatter';
-import { firstHeadingLine, splitLines } from '../core/markdown';
 import {
   buildCodeLink,
-  captureSnippet,
   codeLinkPathFor,
   formatBodyLink,
   resolveCodeLink,
@@ -61,7 +59,6 @@ export interface CreateFlowOptions {
 }
 
 async function askTemplateQuestions(
-  app: FoliumApp,
   rendered: ReturnType<typeof renderTemplate>,
 ): Promise<Record<string, string> | undefined> {
   const answers: Record<string, string> = {};
@@ -141,7 +138,7 @@ export async function createNoteFlow(
     };
     let rendered = renderTemplate(template.body, baseContext);
     if (rendered.questions.length > 0) {
-      const answers = await askTemplateQuestions(app, rendered);
+      const answers = await askTemplateQuestions(rendered);
       if (!answers) return undefined;
       rendered = renderTemplate(template.body, { ...baseContext, answers });
     }
@@ -747,7 +744,6 @@ export async function toggleDoneTasks(app: FoliumApp): Promise<void> {
 }
 
 export async function tasksGroupBy(app: FoliumApp): Promise<void> {
-  const state = app.viewStateStore.get();
   const picked = await vscode.window.showQuickPick(
     [
       { label: 'By due date', value: 'due' as const },

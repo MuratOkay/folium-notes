@@ -4,7 +4,6 @@ import os from 'node:os';
 import path from 'node:path';
 import { FoliumProjectService, FoliumStore } from '../../src/store/store';
 import { mergeSettings } from '../../src/core/settings';
-import { parseNote } from '../../src/core/frontmatter';
 
 let root: string;
 let home: string;

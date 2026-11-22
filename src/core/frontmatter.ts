@@ -1,6 +1,6 @@
 /** Note front matter: parse, serialise (Folium write style) and edit fields in place. */
 
-import { parse as parseYaml, parseDocument, isMap, isSeq } from 'yaml';
+import { parse as parseYaml } from 'yaml';
 import { normalizeColor, type Color } from './colors';
 import { firstHeadingLine, splitFrontMatter } from './markdown';
 import { parseTags } from './tags';

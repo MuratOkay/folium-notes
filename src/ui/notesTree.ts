@@ -2,7 +2,7 @@
 
 import * as vscode from 'vscode';
 import type { FoliumApp } from '../app';
-import { COLOR_THEME, COLORS, type Color } from '../core/colors';
+import { COLOR_THEME, type Color } from '../core/colors';
 import { accessibleLabel, bodyPreview, type NoteSummary } from '../core/note';
 import type { NoteFile } from '../store/store';
 import {

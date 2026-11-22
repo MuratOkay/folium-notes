@@ -43,15 +43,25 @@ async function seedNotes(workspace, count) {
 
 async function launch(phase, workspace) {
   console.log(`[it] launching phase ${phase} (${workspace})`);
-  await runTests({
+  const options = {
     extensionDevelopmentPath: root,
     extensionTestsPath: suite,
-    launchArgs: [workspace, '--disable-extensions', '--disable-workspace-trust', `--user-data-dir=${userDataDir}`, `--extensions-dir=${extensionsDir}`],
+    launchArgs: [
+      workspace,
+      '--disable-extensions',
+      '--disable-workspace-trust',
+      '--no-sandbox',
+      `--user-data-dir=${userDataDir}`,
+      `--extensions-dir=${extensionsDir}`,
+    ],
     extensionTestsEnv: {
       FOLIUM_IT_PHASE: phase,
       FOLIUM_IT_WORKSPACE: workspace,
     },
-  });
+  };
+  // Use an installed VS Code instead of downloading one (CI sets this too).
+  if (process.env.VSCODE_EXECUTABLE) options.vscodeExecutablePath = process.env.VSCODE_EXECUTABLE;
+  await runTests(options);
 }
 
 const firstWorkspace = await prepareWorkspace('project');

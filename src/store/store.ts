@@ -7,7 +7,6 @@ import {
   DEFAULT_FILE_NAME_PATTERN,
   sanitizeFileNameBase,
   slugify,
-  titleFromFileName,
 } from '../core/filenames';
 import {
   parseNote,
@@ -15,7 +14,6 @@ import {
   serializeNote,
   setFrontMatterFields,
   type NoteInit,
-  type NoteMeta,
 } from '../core/frontmatter';
 import { isArchived } from '../core/frontmatter';
 import { buildLinkIndex, type LinkIndex } from '../core/links';
@@ -55,7 +53,7 @@ import { projectJson, type GitRemote } from '../core/keys';
 import { collectTemplates, parseTemplateFile, type TemplateDefinition } from '../core/templates';
 import { isInside, resolveStorePaths, toRelPath, type StorePaths } from './paths';
 import type { FoliumSettings } from '../core/settings';
-import { codeLinkCandidates, parseLines } from '../core/codeLinks';
+import { codeLinkCandidates } from '../core/codeLinks';
 
 export interface NoteFile extends NoteSummary {
   /** Full file content including front matter. */

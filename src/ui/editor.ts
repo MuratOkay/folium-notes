@@ -6,7 +6,6 @@ import fs from 'node:fs';
 import type { FoliumApp } from '../app';
 import type { NoteFile } from '../store/store';
 import {
-  codeLinkAnchor,
   codeLinkCandidates,
   resolveCodeLink,
   STATUS_LABELS,
@@ -17,8 +16,8 @@ import { COLOR_HEX, type Color } from '../core/colors';
 import { parseNote } from '../core/frontmatter';
 import { parseWikiLinks, resolveLink, validateLinks } from '../core/links';
 import { parseTasks } from '../core/tasks';
-import { firstHeadingLine, splitFrontMatter, splitLines } from '../core/markdown';
-import { parsePlaceholders, placeholderDoc, validateTemplate, ALL_PLACEHOLDERS } from '../core/templates';
+import { splitFrontMatter, splitLines } from '../core/markdown';
+import { placeholderDoc, validateTemplate, ALL_PLACEHOLDERS } from '../core/templates';
 import { secureUri } from './secureFs';
 
 export function registerEditorFeatures(app: FoliumApp): void {
@@ -400,7 +399,7 @@ class WikiLinkDocumentLinks implements vscode.DocumentLinkProvider {
   }
 }
 
-function isTemplateDocument(app: FoliumApp, document: vscode.TextDocument): boolean {
+function isTemplateDocument(_app: FoliumApp, document: vscode.TextDocument): boolean {
   if (document.uri.scheme !== 'file') return false;
   const full = document.uri.fsPath.split(path.sep).join('/');
   if (full.includes('/.templates/')) return true;

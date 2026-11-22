@@ -118,10 +118,20 @@ export const VIEWS_CONTAINER = {
 };
 
 export const VIEWS = [
-  { id: 'folium.notes', name: 'Notes', when: 'workspaceFolderCount > 0' },
-  { id: 'folium.tags', name: 'Tags', when: 'workspaceFolderCount > 0' },
-  { id: 'folium.tasks', name: 'Tasks', when: 'workspaceFolderCount > 0' },
-  { id: 'folium.related', name: 'Related', when: 'workspaceFolderCount > 0' },
+  {
+    id: 'folium.notes',
+    name: 'Notes',
+    when: 'workspaceFolderCount > 0',
+    icon: 'images/view-notes.svg',
+  },
+  { id: 'folium.tags', name: 'Tags', when: 'workspaceFolderCount > 0', icon: 'images/view-tags.svg' },
+  { id: 'folium.tasks', name: 'Tasks', when: 'workspaceFolderCount > 0', icon: 'images/view-tasks.svg' },
+  {
+    id: 'folium.related',
+    name: 'Related',
+    when: 'workspaceFolderCount > 0',
+    icon: 'images/view-related.svg',
+  },
 ];
 
 export const VIEWS_WELCOME = [
@@ -481,31 +491,31 @@ export const WALKTHROUGHS = [
         id: 'open',
         title: 'Open the Notes view',
         description: 'Folium Notes adds a Notes view to the activity bar. Shared notes live in `.notes/` and are committed with the code; private notes live in your home folder.',
-        media: { markdown: 'images/walkthrough-notes.svg', alt: 'The Notes view with shared and private groups' },
+        media: { markdown: 'images/walkthrough-notes.svg' },
       },
       {
         id: 'create',
         title: 'Create your first note',
         description: 'Create a shared note for the project, or a private note for yourself.\n[New Shared Note](command:folium.newSharedNote)',
-        media: { markdown: 'images/walkthrough-create.svg', alt: 'Creating a note' },
+        media: { markdown: 'images/walkthrough-create.svg' },
       },
       {
         id: 'templates',
         title: 'Start from a template',
         description: 'Ten built-in templates, plus team templates in `.notes/.templates` and your own in `~/FoliumNotes/.templates`.\n[Browse Templates](command:folium.browseTemplates)',
-        media: { markdown: 'images/walkthrough-templates.svg', alt: 'Templates' },
+        media: { markdown: 'images/walkthrough-templates.svg' },
       },
       {
         id: 'tasks',
         title: 'Track tasks',
         description: 'Every `- [ ]` in a note shows up in the Tasks view, with due dates (`due:2026-11-22` or 📅).',
-        media: { markdown: 'images/walkthrough-tasks.svg', alt: 'Tasks view' },
+        media: { markdown: 'images/walkthrough-tasks.svg' },
       },
       {
         id: 'ai',
         title: 'Work with AI safely',
         description: 'AI tools cannot read your notes. Send a prompt note to Copilot, Cline, Roo, Kilo or a custom target — private and sensitive notes are never sent.\n[Connect AI Tools](command:folium.connectAITools)',
-        media: { markdown: 'images/walkthrough-ai.svg', alt: 'AI follow-ups' },
+        media: { markdown: 'images/walkthrough-ai.svg' },
       },
     ],
   },

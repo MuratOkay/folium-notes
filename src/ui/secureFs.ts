@@ -73,11 +73,11 @@ export class SecureFileSystem implements vscode.FileSystemProvider {
     this.changes.fire([{ type: vscode.FileChangeType.Changed, uri }]);
   }
 
-  async delete(uri: vscode.Uri): Promise<void> {
+  async delete(_uri: vscode.Uri): Promise<void> {
     throw vscode.FileSystemError.NoPermissions('Encrypted notes cannot be deleted from the editor. Use "Folium: Delete Note".');
   }
 
-  async rename(uri: vscode.Uri): Promise<void> {
+  async rename(_uri: vscode.Uri): Promise<void> {
     throw vscode.FileSystemError.NoPermissions('Encrypted notes cannot be renamed from the editor.');
   }
 

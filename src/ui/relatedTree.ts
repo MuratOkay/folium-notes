@@ -1,7 +1,6 @@
 /** Related view: links, backlinks, code links and issues for the active editor. */
 
 import * as vscode from 'vscode';
-import fs from 'node:fs/promises';
 import type { FoliumApp } from '../app';
 import { parseWikiLinks, resolveLink, type WikiLink } from '../core/links';
 import { codeLinkAnchor, resolveCodeLink, STATUS_LABELS, type CodeLinkResolution, type CodeFileProvider } from '../core/codeLinks';

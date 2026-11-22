@@ -58,7 +58,7 @@ type LinkTable = Map<string, string>;
 /** Obsidian export keeps `[[wiki links]]`; Joplin export needs relative file links. */
 function rewriteLinks(body: string, format: ExportFormat, table: LinkTable): string {
   if (format === 'markdown') return body;
-  return body.replace(/\[\[([^[\]\n]+)\]\]/g, (raw, inner: string) => {
+  return body.replace(/\[\[([^[\]\n]+)\]\]/g, (_raw, inner: string) => {
     let target = inner;
     let alias: string | undefined;
     const pipe = target.indexOf('|');

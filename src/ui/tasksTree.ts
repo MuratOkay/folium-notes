@@ -12,12 +12,10 @@ export type TasksNode =
 export class TasksTreeProvider implements vscode.TreeDataProvider<TasksNode> {
   private readonly changes = new vscode.EventEmitter<TasksNode | undefined>();
   readonly onDidChangeTreeData = this.changes.event;
-  private view?: vscode.TreeView<TasksNode>;
 
   constructor(private readonly app: FoliumApp) {}
 
   attach(view: vscode.TreeView<TasksNode>): void {
-    this.view = view;
     view.onDidChangeCheckboxState(async (event) => {
       for (const [node, state] of event.items) {
         if (node.kind !== 'task') continue;

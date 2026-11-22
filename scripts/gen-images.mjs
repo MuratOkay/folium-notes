@@ -8,16 +8,18 @@ const root = path.resolve(import.meta.dirname, '..');
 const images = path.join(root, 'images');
 await fs.mkdir(images, { recursive: true });
 
+let crcTable;
+
 function crc32(buffer) {
-  let table = crc32.table;
-  if (!table) {
-    table = crc32.table = new Int32Array(256);
+  if (!crcTable) {
+    crcTable = new Int32Array(256);
     for (let n = 0; n < 256; n++) {
       let c = n;
       for (let k = 0; k < 8; k++) c = c & 1 ? 0xedb88320 ^ (c >>> 1) : c >>> 1;
-      table[n] = c;
+      crcTable[n] = c;
     }
   }
+  const table = crcTable;
   let crc = -1;
   for (const byte of buffer) crc = (crc >>> 8) ^ table[(crc ^ byte) & 0xff];
   return (crc ^ -1) >>> 0;
@@ -112,6 +114,19 @@ await fs.writeFile(
   `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="currentColor"><path d="${leafPath}"/></svg>\n`,
 );
 
+const viewIcons = {
+  'view-notes.svg': '<path d="M6 2h9l4 4v16H6z" fill="none" stroke="currentColor" stroke-width="1.8"/><path d="M9 9h7M9 13h7M9 17h4" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+  'view-tags.svg': '<path d="M3 4h8l10 10-8 8L3 12z" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round"/><circle cx="8" cy="9" r="2" fill="currentColor"/>',
+  'view-tasks.svg': '<path d="M4 5h16M4 12h16M4 19h16" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M2 5l1.2 1.2L5.5 4M2 12l1.2 1.2L5.5 11" stroke="currentColor" stroke-width="1.8" fill="none" stroke-linecap="round"/>',
+  'view-related.svg': '<path d="M9.5 14.5l5-5" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path d="M11 7l1.5-1.5a3.5 3.5 0 015 5L16 12M13 17l-1.5 1.5a3.5 3.5 0 01-5-5L8 12" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/>',
+};
+for (const [name, body] of Object.entries(viewIcons)) {
+  await fs.writeFile(
+    path.join(images, name),
+    `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none">${body}</svg>\n`,
+  );
+}
+
 const frame = (title, body) => `<svg xmlns="http://www.w3.org/2000/svg" width="640" height="360" viewBox="0 0 640 360">
   <rect width="640" height="360" rx="10" fill="#1e2229"/>
   <rect x="0" y="0" width="640" height="34" rx="10" fill="#272d36"/>
@@ -185,4 +200,4 @@ await fs.writeFile(
   ),
 );
 
-console.log('[images] icon.png + gutter icons + folium.svg + 5 walkthrough previews');
+console.log('[images] icon.png + gutter icons + view icons + folium.svg + 5 walkthrough previews');

@@ -120,7 +120,7 @@ export function buildIssueRequest(
   settings: IssueSettings,
   draft: IssueDraft,
   repo: RepoRef | undefined,
-  note?: { id?: string; relPath?: string; scope?: Scope; archived?: boolean },
+  _note?: { id?: string; relPath?: string; scope?: Scope; archived?: boolean },
 ): IssueRequest {
   if (settings.provider === 'github') {
     if (!repo || repo.host !== 'github.com') throw new Error('GitHub issues need a github.com remote');

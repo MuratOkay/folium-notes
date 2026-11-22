@@ -4,7 +4,7 @@ import * as vscode from 'vscode';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { FoliumApp } from '../app';
-import { askTitle, confirmDanger } from './util';
+import { confirmDanger } from './util';
 import { createNoteFlow } from './noteCommands';
 import {
   renderTemplate,

@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { FoliumApp } from '../app';
 import { activeNote, pickNote } from './util';
-import { codeContext, createNoteFlow } from './noteCommands';
+import { codeContext } from './noteCommands';
 import { renderTemplate, type TemplateContext } from '../core/templates';
 import {
   composeAnswersReply,
