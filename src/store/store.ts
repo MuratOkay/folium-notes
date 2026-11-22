@@ -146,6 +146,7 @@ export class FoliumStore {
   private templatesValue: TemplateDefinition[] = [];
   private linkIndexValue: LinkIndex = buildLinkIndex([]);
   private writeQueues = new Map<string, Promise<unknown>>();
+  private writeTimes = new Map<string, number>();
   private readonly now: () => Date;
   private readonly newId: () => string;
   ready = false;
@@ -486,6 +487,7 @@ export class FoliumStore {
     if (input.transform) raw = input.transform(raw);
     try {
       await fs.writeFile(absPath, raw, { encoding: 'utf8', flag: 'wx' });
+      this.markWritten(absPath);
     } catch (error) {
       if ((error as NodeJS.ErrnoException).code !== 'EEXIST') throw error;
       fileName = buildFileName({
@@ -511,6 +513,16 @@ export class FoliumStore {
     return note;
   }
 
+  /** True when this file was written by Folium itself (watchers should ignore it). */
+  wasWrittenRecently(absPath: string, windowMs = 1500): boolean {
+    const at = this.writeTimes.get(path.resolve(absPath));
+    return at !== undefined && Date.now() - at < windowMs;
+  }
+
+  private markWritten(absPath: string): void {
+    this.writeTimes.set(path.resolve(absPath), Date.now());
+  }
+
   private enqueue<T>(file: string, task: () => Promise<T>): Promise<T> {
     const previous = this.writeQueues.get(file) ?? Promise.resolve();
     const next = previous.then(task, task);
@@ -527,6 +539,7 @@ export class FoliumStore {
     await this.enqueue(absPath, async () => {
       await fs.mkdir(path.dirname(absPath), { recursive: true });
       await fs.writeFile(absPath, raw, 'utf8');
+      this.markWritten(absPath);
     });
     const scopeRoot = this.scopeRoot(note.scope);
     const updated = await this.reloadFile(absPath, scopeRoot, note.scope);
@@ -572,6 +585,7 @@ export class FoliumStore {
     await this.enqueue(note.absPath, async () => {
       await fs.writeFile(newAbs, raw, 'utf8');
       await fs.unlink(note.absPath).catch(() => undefined);
+      this.markWritten(newAbs);
     });
     this.stateValue = remapStateKey(
       this.stateValue,
@@ -680,6 +694,7 @@ export class FoliumStore {
     }
     await fs.mkdir(this.paths.trashDir, { recursive: true });
     await fs.copyFile(note.absPath, path.join(this.paths.trashDir, storedName));
+    this.markWritten(path.join(this.paths.trashDir, storedName));
     const personal = findStateEntry(this.stateValue, {
       id: note.id,
       scope: note.scope,
@@ -856,6 +871,7 @@ export class FoliumStore {
     });
     const target = path.join(dir, fileName);
     await fs.writeFile(target, note.raw, 'utf8');
+    this.markWritten(target);
     await fs.unlink(note.absPath).catch(() => undefined);
     this.notesByPath.delete(note.absPath);
     this.stateValue = remapStateKey(
@@ -1033,6 +1049,9 @@ export class FoliumProjectService {
     for (const note of this.store.allNotes) {
       if (note.meta.imported_from) importedFrom.add(note.meta.imported_from);
       if (note.id) ids.add(note.id);
+    }
+    for (const entry of Object.values(this.store.projectState.notes)) {
+      if (entry?.joplinId) ids.add(entry.joplinId);
     }
     return { importedFrom, ids };
   }

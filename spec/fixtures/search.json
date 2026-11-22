@@ -1,0 +1,87 @@
+{
+  "docs": [
+    {
+      "key": "a",
+      "title": "Login redirect bug",
+      "tags": [
+        "bug",
+        "auth/login"
+      ],
+      "body": "The redirect loops after logout.",
+      "updated": 300
+    },
+    {
+      "key": "b",
+      "title": "Meeting notes",
+      "tags": [
+        "meeting"
+      ],
+      "body": "Discussed the login flow and the redirect strategy.",
+      "updated": 200
+    },
+    {
+      "key": "c",
+      "title": "Shopping",
+      "tags": [],
+      "body": "milk, bread",
+      "updated": 100
+    }
+  ],
+  "results": [
+    {
+      "query": "login",
+      "keys": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "query": "login redirect",
+      "keys": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "query": "redir",
+      "keys": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "query": "redreict",
+      "keys": [
+        "a",
+        "b"
+      ]
+    },
+    {
+      "query": "#auth",
+      "keys": [
+        "a"
+      ]
+    },
+    {
+      "query": "#login",
+      "keys": []
+    },
+    {
+      "query": "redirect #meeting",
+      "keys": [
+        "b"
+      ]
+    },
+    {
+      "query": "milk",
+      "keys": [
+        "c"
+      ]
+    }
+  ],
+  "recent": [
+    "a",
+    "b",
+    "c"
+  ]
+}

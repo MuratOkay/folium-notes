@@ -1,0 +1,123 @@
+{
+  "noteRaw": "---\nid: 01J0ABCDEFGHJKMNPQRSTVWXYZ\ntitle: Fix login redirect\ncreated: 2026-11-22T14:14:05+03:00\ntags: [ bug, auth/login ]\ncolor: red\ncode:\n  - path: ../src/auth/login.ts\n    lines: 12-18\n    text: |-\n      export function login() {\n      return redirect(url);\n    endText: }\n---\n\n# Fix login redirect\n\nThe redirect loops after logout. See [[Auth flow]] and #needs-review.\n\n- [ ] Reproduce due:2026-11-25\n- [x] Write test\n",
+  "parsed": {
+    "meta": {
+      "tags": [],
+      "code": []
+    },
+    "body": "\n# Fix login redirect\n\nThe redirect loops after logout. See [[Auth flow]] and #needs-review.\n\n- [ ] Reproduce due:2026-11-25\n- [x] Write test\n",
+    "hasHeader": true
+  },
+  "titleCases": [
+    {
+      "meta": {
+        "title": "From header"
+      },
+      "body": "# Heading\n",
+      "fileName": "x.md",
+      "title": "From header",
+      "resolved": "From header"
+    },
+    {
+      "meta": {},
+      "body": "\n\n## Heading text\n\nbody",
+      "fileName": "x.md",
+      "title": "Heading text",
+      "resolved": "Heading text"
+    },
+    {
+      "meta": {},
+      "body": "\n\n",
+      "fileName": "2026-11-22-fix-login.md",
+      "title": "Fix login",
+      "resolved": "Fix login"
+    }
+  ],
+  "scalars": [
+    {
+      "value": "plain text",
+      "encoded": "plain text"
+    },
+    {
+      "value": "12",
+      "encoded": "\"12\""
+    },
+    {
+      "value": "true",
+      "encoded": "\"true\""
+    },
+    {
+      "value": "a: b",
+      "encoded": "\"a: b\""
+    },
+    {
+      "value": "#tag",
+      "encoded": "\"#tag\""
+    },
+    {
+      "value": "",
+      "encoded": "\"\""
+    },
+    {
+      "value": "needs review",
+      "encoded": "needs review"
+    },
+    {
+      "value": "2026-11-22T14:14:05+03:00",
+      "encoded": "2026-11-22T14:14:05+03:00"
+    }
+  ],
+  "serialize": {
+    "init": {
+      "id": "01J0ABCDEFGHJKMNPQRSTVWXYZ",
+      "title": "Fix: login error",
+      "created": "2026-11-22T14:14:05+03:00",
+      "tags": [
+        "bug",
+        "needs review"
+      ],
+      "code": [
+        {
+          "path": "src/a.ts",
+          "lines": "12-18",
+          "text": "const a = 1;\nconst b = 2;",
+          "endText": "const b = 2;"
+        }
+      ],
+      "extra": {
+        "custom": "v"
+      }
+    },
+    "body": "# Fix: login error\n",
+    "expected": "---\nid: 01J0ABCDEFGHJKMNPQRSTVWXYZ\ntitle: \"Fix: login error\"\ncreated: 2026-11-22T14:14:05+03:00\ntags: [ bug, needs review ]\ncode:\n  - path: src/a.ts\n    lines: 12-18\n    text: |-\n      const a = 1;\n      const b = 2;\n    endText: const b = 2;\ncustom: v\n---\n# Fix: login error\n"
+  },
+  "edits": [
+    {
+      "key": "color",
+      "value": "red",
+      "expected": "---\n# comment stays\nid: 01J0ABCDEFGHJKMNPQRSTVWXYZ\ncreated: 2026-11-22T14:14:05+03:00\ntags: [ a, b ]\ncustom:  spaced value  \ncolor: red\ncode:\n  - path: src/a.ts\n    lines: 12-18\n---\n\nBody\n"
+    },
+    {
+      "key": "tags",
+      "value": [
+        "x",
+        "y"
+      ],
+      "expected": "---\n# comment stays\nid: 01J0ABCDEFGHJKMNPQRSTVWXYZ\ncreated: 2026-11-22T14:14:05+03:00\ntags: [ x, y ]\ncustom:  spaced value  \ncode:\n  - path: src/a.ts\n    lines: 12-18\n---\n\nBody\n"
+    },
+    {
+      "key": "code",
+      "value": [
+        {
+          "path": "b.ts",
+          "lines": "1-2"
+        }
+      ],
+      "expected": "---\n# comment stays\nid: 01J0ABCDEFGHJKMNPQRSTVWXYZ\ncreated: 2026-11-22T14:14:05+03:00\ntags: [ a, b ]\ncustom:  spaced value  \ncode:\n  - path: b.ts\n    lines: 1-2\n---\n\nBody\n"
+    },
+    {
+      "key": "tags",
+      "expected": "---\n# comment stays\nid: 01J0ABCDEFGHJKMNPQRSTVWXYZ\ncreated: 2026-11-22T14:14:05+03:00\ncustom:  spaced value  \ncode:\n  - path: src/a.ts\n    lines: 12-18\n---\n\nBody\n"
+    }
+  ]
+}

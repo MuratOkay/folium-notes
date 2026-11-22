@@ -1,0 +1,8 @@
+{
+  "keyText": "AAECAwQFBgcICQoLDA0ODxAREhMUFRYXGBkaGxwdHh8=",
+  "fingerprint": "630dcd29",
+  "plaintext": "# Credentials\n\nuser: admin\npass: hunter2\n",
+  "iv": "000102030405060708090a0b",
+  "payload": "v1.AAECAwQFBgcICQoLNwpV1rF3dm9HWGg8Kidxk2QilWmggad1+Sj258Ljchjws/UO0Bo7EVEJ7/V8GnOIIXjbktukYKp+",
+  "header": "aes-256-gcm:630dcd29"
+}

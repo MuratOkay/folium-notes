@@ -1,0 +1,212 @@
+{
+  "builtins": [
+    {
+      "name": "Bug investigation",
+      "description": "Reproduce, isolate and fix a bug.",
+      "tags": [
+        "bug"
+      ],
+      "privateOnly": false,
+      "sharedOnly": false,
+      "sensitive": false,
+      "kind": "",
+      "body": "# {{title}}\n\n## Symptoms\n\n## Steps to reproduce\n\n1. \n\n## Expected\n\n## Actual\n\n## Environment\n\n- Branch: {{branch}}\n- Reported: {{date}} {{time}}\n\n## Investigation\n\n## Fix\n\n- [ ] Reproduce\n- [ ] Root cause\n- [ ] Fix\n- [ ] Regression test\n"
+    },
+    {
+      "name": "Meeting notes",
+      "description": "Agenda, notes, decisions and action items.",
+      "tags": [
+        "meeting"
+      ],
+      "privateOnly": false,
+      "sharedOnly": false,
+      "sensitive": false,
+      "kind": "",
+      "body": "# {{title}}\n\nDate: {{date}} {{time}}\nAttendees: \n\n## Agenda\n\n## Notes\n\n## Decisions\n\n## Action items\n\n- [ ] \n"
+    },
+    {
+      "name": "Decision record",
+      "description": "Context, decision and consequences.",
+      "tags": [
+        "decision"
+      ],
+      "privateOnly": false,
+      "sharedOnly": false,
+      "sensitive": false,
+      "kind": "",
+      "body": "# {{title}}\n\nDate: {{date}}\nStatus: proposed\n\n## Context\n\n## Decision\n\n## Consequences\n\n## Alternatives considered\n"
+    },
+    {
+      "name": "Manual test prerequisites",
+      "description": "Prerequisites with a bash block, then test steps.",
+      "tags": [
+        "test"
+      ],
+      "privateOnly": false,
+      "sharedOnly": false,
+      "sensitive": false,
+      "kind": "",
+      "body": "# {{title}}\n\n## Prerequisites\n\n```bash\n# Install dependencies and build\nnpm install\nnpm run build\n```\n\n## Steps\n\n1. \n\n## Expected result\n\n## Actual result\n"
+    },
+    {
+      "name": "Credentials",
+      "description": "Private, sensitive credentials table (encrypted on create).",
+      "tags": [
+        "credentials"
+      ],
+      "privateOnly": true,
+      "sharedOnly": false,
+      "sensitive": true,
+      "kind": "",
+      "body": "# {{title}}\n\n| No | Name | Username | Password |\n| -- | ---- | -------- | -------- |\n| 1  |      |          |          |\n\n> Sensitive: this note is never exported, published or sent to AI tools.\n"
+    },
+    {
+      "name": "Today I learned",
+      "description": "Capture a small learning.",
+      "tags": [
+        "til"
+      ],
+      "privateOnly": false,
+      "sharedOnly": false,
+      "sensitive": false,
+      "kind": "",
+      "body": "# {{title}}\n\n## What I learned\n\n## Why it matters\n\n## Example\n\n{{cursor}}\n\n## Links\n"
+    },
+    {
+      "name": "Checklist",
+      "description": "A simple checklist.",
+      "tags": [],
+      "privateOnly": false,
+      "sharedOnly": false,
+      "sensitive": false,
+      "kind": "",
+      "body": "# {{title}}\n\n- [ ] \n"
+    },
+    {
+      "name": "Branch note",
+      "description": "Notes for the current git branch.",
+      "tags": [
+        "branch"
+      ],
+      "privateOnly": false,
+      "sharedOnly": false,
+      "sensitive": false,
+      "kind": "",
+      "body": "# {{title}}\n\nBranch: {{branch}}\nCreated: {{date}}\n\n## Context\n\n## Checklist\n\n- [ ] \n"
+    },
+    {
+      "name": "AI prompt",
+      "description": "A prompt with selection, file and language context.",
+      "tags": [
+        "ai"
+      ],
+      "privateOnly": false,
+      "sharedOnly": true,
+      "sensitive": false,
+      "kind": "prompt",
+      "body": "# {{title}}\n\n## Task\n\n## Context\n\nFile: {{file}}\nLanguage: {{language}}\n\n```{{language}}\n{{selection}}\n```\n\n## Constraints\n\n{{cursor}}\n"
+    },
+    {
+      "name": "Other",
+      "description": "An empty note.",
+      "tags": [],
+      "privateOnly": false,
+      "sharedOnly": false,
+      "sensitive": false,
+      "kind": "",
+      "body": "# {{title}}\n\n{{cursor}}\n"
+    }
+  ],
+  "render": {
+    "body": "{{title}}|{{date}}|{{time}}|{{user}}|{{project}}|{{branch}}|{{cursor}}",
+    "context": {
+      "title": "Fix login redirect",
+      "now": "2026-11-22T14:14:05.000Z",
+      "user": "Ada Lovelace",
+      "project": "github.com/acme/webapp",
+      "branch": "feature/login",
+      "selection": "return redirect(url);",
+      "file": "src/auth/login.ts",
+      "language": "typescript",
+      "clipboard": "Paste from clipboard"
+    },
+    "expected": {
+      "text": "Fix login redirect|2026-11-22|14:14|Ada Lovelace|github.com/acme/webapp|feature/login|",
+      "cursorOffset": 86,
+      "questions": [],
+      "unknown": []
+    }
+  },
+  "questions": [
+    {
+      "question": "Which tool?",
+      "options": [
+        "Copilot",
+        "Cline"
+      ]
+    }
+  ],
+  "problems": [
+    {
+      "body": "{{titel}}",
+      "kind": "note",
+      "problems": [
+        {
+          "message": "Unknown placeholder {{titel}}",
+          "start": 0,
+          "end": 9,
+          "severity": "error",
+          "suggestion": "Did you mean {{title}}?"
+        }
+      ]
+    },
+    {
+      "body": "{{selection}}",
+      "kind": "note",
+      "problems": [
+        {
+          "message": "{{selection}} is only available in prompt templates (kind: prompt)",
+          "start": 0,
+          "end": 13,
+          "severity": "warning"
+        }
+      ]
+    },
+    {
+      "body": "{{ask:}}",
+      "kind": "note",
+      "problems": [
+        {
+          "message": "Question is empty — use {{ask:Your question}}",
+          "start": 0,
+          "end": 8,
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "body": "{{cursor}} {{cursor}}",
+      "kind": "note",
+      "problems": [
+        {
+          "message": "Only one {{cursor}} placeholder is allowed",
+          "start": 11,
+          "end": 21,
+          "severity": "error"
+        }
+      ]
+    },
+    {
+      "body": "{{ask:Pick|A|a}}",
+      "kind": "note",
+      "problems": [
+        {
+          "message": "Duplicate option \"a\"",
+          "start": 0,
+          "end": 16,
+          "severity": "warning"
+        }
+      ]
+    }
+  ]
+}

@@ -104,11 +104,11 @@ export function matchesFilters(
   return inDateRange(note, filters, now);
 }
 
-export function applyFilters(
-  notes: NoteSummary[],
+export function applyFilters<T extends NoteSummary>(
+  notes: T[],
   filters: FilterState,
   now: Date = new Date(),
-): NoteSummary[] {
+): T[] {
   if (!hasActiveFilters(filters)) return notes;
   return notes.filter((note) => matchesFilters(note, filters, now));
 }
@@ -126,12 +126,12 @@ export interface NoteGroup {
   section?: 'archive';
 }
 
-function sortWithin(
-  notes: NoteSummary[],
+function sortWithin<T extends NoteSummary>(
+  notes: T[],
   sortBy: SortBy,
   order: SortOrder,
   pinnedFirst: boolean,
-): NoteSummary[] {
+): T[] {
   const direction = order === 'asc' ? 1 : -1;
   return [...notes].sort((a, b) => {
     if (pinnedFirst && a.pinned !== b.pinned) return a.pinned ? -1 : 1;
@@ -143,12 +143,12 @@ function sortWithin(
   });
 }
 
-export function sortNotes(
-  notes: NoteSummary[],
+export function sortNotes<T extends NoteSummary>(
+  notes: T[],
   sortBy: SortBy = 'updated',
   order: SortOrder = 'desc',
   pinnedFirst = true,
-): NoteSummary[] {
+): T[] {
   return sortWithin(notes, sortBy, order, pinnedFirst);
 }
 

@@ -1,0 +1,65 @@
+{
+  "note": "---\nid: 01J0ABCDEFGHJKMNPQRSTVWXYZ\ntitle: Fix login redirect\ncreated: 2026-11-22T14:14:05+03:00\ntags: [ bug, auth/login ]\ncolor: red\ncode:\n  - path: ../src/auth/login.ts\n    lines: 12-18\n    text: |-\n      export function login() {\n      return redirect(url);\n    endText: }\n---\n\n# Fix login redirect\n\nThe redirect loops after logout. See [[Auth flow]] and #needs-review.\n\n- [ ] Reproduce due:2026-11-25\n- [x] Write test\n",
+  "tasks": [
+    {
+      "noteKey": "01J0ABCDEFGHJKMNPQRSTVWXYZ",
+      "noteTitle": "Fix login redirect",
+      "scope": "shared",
+      "relPath": "2026-11-22-fix-login-redirect.md",
+      "line": 20,
+      "lineText": "- [ ] Reproduce due:2026-11-25",
+      "text": "Reproduce",
+      "done": false,
+      "due": "2026-11-25",
+      "offset": 376,
+      "indent": 0
+    },
+    {
+      "noteKey": "01J0ABCDEFGHJKMNPQRSTVWXYZ",
+      "noteTitle": "Fix login redirect",
+      "scope": "shared",
+      "relPath": "2026-11-22-fix-login-redirect.md",
+      "line": 21,
+      "lineText": "- [x] Write test",
+      "text": "Write test",
+      "done": true,
+      "offset": 407,
+      "indent": 0
+    }
+  ],
+  "buckets": [
+    {
+      "text": "Reproduce",
+      "bucket": "next7"
+    },
+    {
+      "text": "Write test",
+      "bucket": "none"
+    }
+  ],
+  "lineRanges": [
+    {
+      "input": "12-18",
+      "range": [
+        12,
+        18
+      ]
+    },
+    {
+      "input": "7",
+      "range": [
+        7,
+        7
+      ]
+    },
+    {
+      "input": "bad",
+      "range": null
+    }
+  ],
+  "snippet": {
+    "lines": "1-5",
+    "text": "import { redirect } from \"./redirect\";\nexport function login() {\nconst token = readToken();",
+    "endText": "return redirect(url);"
+  }
+}

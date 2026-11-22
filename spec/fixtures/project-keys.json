@@ -1,0 +1,114 @@
+{
+  "remoteUrls": [
+    {
+      "url": "git@github.com:Org/Repo.git",
+      "key": "github.com/org/repo"
+    },
+    {
+      "url": "ssh://git@github.com/Org/Repo.git",
+      "key": "github.com/org/repo"
+    },
+    {
+      "url": "https://github.com/Org/Repo.git",
+      "key": "github.com/org/repo"
+    },
+    {
+      "url": "https://user@gitlab.com/Group/Sub/Repo.git/",
+      "key": "gitlab.com/group/sub/repo"
+    },
+    {
+      "url": "https://dev.azure.com/Contoso/Proj/_git/Repo",
+      "key": "dev.azure.com/contoso/proj/repo"
+    },
+    {
+      "url": "https://contoso.visualstudio.com/Proj/_git/Repo",
+      "key": "dev.azure.com/contoso/proj/repo"
+    },
+    {
+      "url": "git@ssh.dev.azure.com:v3/Contoso/Proj/Repo",
+      "key": "dev.azure.com/contoso/proj/repo"
+    },
+    {
+      "url": "https://bitbucket.org/team/repo.git",
+      "key": "bitbucket.org/team/repo"
+    }
+  ],
+  "keyCases": [
+    {
+      "name": "monorepo sub folder",
+      "input": {
+        "remotes": [
+          {
+            "name": "upstream",
+            "url": "https://github.com/other/repo.git"
+          },
+          {
+            "name": "origin",
+            "url": "git@github.com:Org/Repo.git"
+          }
+        ],
+        "repoRoot": "/work/repo",
+        "projectRoot": "/work/repo/packages/web"
+      },
+      "key": "github.com/org/repo/packages/web"
+    },
+    {
+      "name": "first remote",
+      "input": {
+        "remotes": [
+          {
+            "name": "upstream",
+            "url": "https://github.com/other/repo.git"
+          }
+        ],
+        "projectRoot": "/work/repo"
+      },
+      "key": "github.com/other/repo"
+    },
+    {
+      "name": "no remote",
+      "input": {
+        "remotes": [],
+        "projectRoot": "/home/ada/projects/app"
+      },
+      "key": "local/app-73aa449a"
+    },
+    {
+      "name": "windows local",
+      "input": {
+        "remotes": [],
+        "projectRoot": "C:\\Users\\Ada\\App",
+        "isWindows": true
+      },
+      "key": "local/App-066945e6"
+    },
+    {
+      "name": "override",
+      "input": {
+        "remotes": [
+          {
+            "name": "origin",
+            "url": "git@github.com:a/b.git"
+          }
+        ],
+        "projectRoot": "/x",
+        "override": "custom/key"
+      },
+      "key": "custom/key"
+    }
+  ],
+  "folderNames": [
+    {
+      "key": "github.com/org/repo",
+      "folder": "github.com_org_repo"
+    },
+    {
+      "key": "dev.azure.com/contoso/proj/repo",
+      "folder": "dev.azure.com_contoso_proj_repo"
+    },
+    {
+      "key": "github.com/aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa/repo",
+      "folder": "github.com_aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa-bc83c413"
+    }
+  ]
+}

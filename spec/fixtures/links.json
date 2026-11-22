@@ -1,0 +1,63 @@
+{
+  "notes": [
+    {
+      "key": "1",
+      "id": "01J0ABCDEFGHJKMNPQRSTVWXYZ",
+      "title": "Login flow",
+      "fileName": "2026-11-22-login-flow.md",
+      "relPath": "auth/2026-11-22-login-flow.md",
+      "scope": "shared"
+    },
+    {
+      "key": "2",
+      "title": "Secrets",
+      "fileName": "secrets.md",
+      "relPath": "secrets.md",
+      "scope": "private"
+    }
+  ],
+  "parse": [
+    {
+      "target": "Login flow",
+      "heading": "Steps",
+      "alias": "the steps",
+      "raw": "[[Login flow#Steps|the steps]]",
+      "start": 4,
+      "end": 34,
+      "contentStart": 6
+    }
+  ],
+  "resolve": {
+    "byTitle": [
+      "1"
+    ],
+    "byFileName": [
+      "1"
+    ],
+    "byRelPath": [
+      "1"
+    ],
+    "byId": [
+      "1"
+    ],
+    "missing": []
+  },
+  "backlinks": [
+    "[[Login flow]]",
+    "[[Login flow#Steps|x]]"
+  ],
+  "rename": {
+    "text": "a [[New]] b [[New#H|alias]] c",
+    "count": 2
+  },
+  "diagnostics": [
+    {
+      "problem": "missing",
+      "target": "Nope"
+    },
+    {
+      "problem": "private-from-shared",
+      "target": "Secrets"
+    }
+  ]
+}

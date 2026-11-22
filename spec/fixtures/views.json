@@ -1,0 +1,42 @@
+{
+  "date": [
+    {
+      "id": "date-today",
+      "label": "Today",
+      "count": 1
+    },
+    {
+      "id": "date-yesterday",
+      "label": "Yesterday",
+      "count": 1
+    },
+    {
+      "id": "date-month-2026-10",
+      "label": "October 2026",
+      "count": 1
+    }
+  ],
+  "tag": [
+    {
+      "id": "tag-auth",
+      "label": "auth",
+      "depth": 0
+    },
+    {
+      "id": "tag-auth/login",
+      "label": "login",
+      "depth": 1
+    },
+    {
+      "id": "tag-bug",
+      "label": "bug",
+      "depth": 0
+    }
+  ],
+  "scope": [
+    {
+      "id": "shared",
+      "count": 3
+    }
+  ]
+}

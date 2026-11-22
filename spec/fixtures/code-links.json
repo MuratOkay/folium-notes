@@ -1,0 +1,111 @@
+{
+  "sourceLines": [
+    "import { redirect } from \"./redirect\";",
+    "",
+    "export function login() {",
+    "  const token = readToken();",
+    "  return redirect(url);",
+    "}",
+    "",
+    "export function logout() {",
+    "  clearToken();",
+    "}"
+  ],
+  "cases": [
+    {
+      "name": "exact",
+      "link": {
+        "path": "a.ts",
+        "lines": "3-6",
+        "text": "export function login() {",
+        "endText": "}"
+      },
+      "lines": [
+        "import { redirect } from \"./redirect\";",
+        "",
+        "export function login() {",
+        "  const token = readToken();",
+        "  return redirect(url);",
+        "}",
+        "",
+        "export function logout() {",
+        "  clearToken();",
+        "}"
+      ],
+      "result": {
+        "status": "exact",
+        "start": 3,
+        "end": 6
+      }
+    },
+    {
+      "name": "moved",
+      "link": {
+        "path": "a.ts",
+        "lines": "3-4",
+        "text": "export function login() {\n  const token = readToken();"
+      },
+      "lines": [
+        "// header",
+        "",
+        "import { redirect } from \"./redirect\";",
+        "",
+        "export function login() {",
+        "  const token = readToken();",
+        "  return redirect(url);",
+        "}",
+        "",
+        "export function logout() {",
+        "  clearToken();",
+        "}"
+      ],
+      "result": {
+        "status": "moved",
+        "start": 5,
+        "end": 6
+      }
+    },
+    {
+      "name": "moved-first",
+      "link": {
+        "path": "a.ts",
+        "lines": "3-4",
+        "text": "export function login() {\n  const token = readToken(user);"
+      },
+      "lines": [
+        "import { redirect } from \"./redirect\";",
+        "",
+        "export function login() {",
+        "  const token = readToken();",
+        "  return redirect(url);",
+        "}",
+        "",
+        "export function logout() {",
+        "  clearToken();",
+        "}"
+      ],
+      "result": {
+        "status": "moved-first",
+        "start": 3,
+        "end": 4
+      }
+    },
+    {
+      "name": "lost",
+      "link": {
+        "path": "missing.ts",
+        "lines": "1-2",
+        "text": "nope"
+      },
+      "lines": [],
+      "result": null
+    }
+  ],
+  "statusLabels": {
+    "exact": "Exact",
+    "moved": "Moved",
+    "moved-first": "Moved (first line)",
+    "fuzzy": "Fuzzy match",
+    "lost": "Lost"
+  }
+}

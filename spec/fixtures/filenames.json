@@ -1,0 +1,85 @@
+{
+  "slugs": [
+    {
+      "input": "Iğdır Çay Öğün",
+      "slug": "igdir-cay-ogun"
+    },
+    {
+      "input": "Crème brûlée",
+      "slug": "creme-brulee"
+    },
+    {
+      "input": "Hello, world! / test",
+      "slug": "hello-world-test"
+    },
+    {
+      "input": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa",
+      "slug": "aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"
+    },
+    {
+      "input": "...",
+      "slug": ""
+    }
+  ],
+  "files": [
+    {
+      "pattern": "{date}-{slug}",
+      "title": "Fix login",
+      "created": "2026-11-22T14:14:05.000Z",
+      "id": "01J0ABCDEFGHJKMNPQRSTVWXYZ",
+      "result": {
+        "fileName": "2026-11-22-fix-login.md",
+        "base": "2026-11-22-fix-login",
+        "slug": "fix-login"
+      }
+    },
+    {
+      "pattern": "{date}_{time}_{slug}_{id}",
+      "title": "Hello, World!",
+      "created": "2026-11-22T14:14:05.000Z",
+      "id": "01J0ABCDEFGHJKMNPQRSTVWXYZ",
+      "result": {
+        "fileName": "2026-11-22_14-14-05_hello-world_01J0ABCDEFGHJKMNPQRSTVWXYZ.md",
+        "base": "2026-11-22_14-14-05_hello-world_01J0ABCDEFGHJKMNPQRSTVWXYZ",
+        "slug": "hello-world"
+      }
+    },
+    {
+      "pattern": "{slug}",
+      "title": "CON",
+      "created": "2026-11-22T14:14:05.000Z",
+      "id": "X",
+      "result": {
+        "fileName": "con_.md",
+        "base": "con_",
+        "slug": "con"
+      }
+    },
+    {
+      "pattern": "{slug}",
+      "title": "a<b>c:d",
+      "created": "2026-11-22T14:14:05.000Z",
+      "id": "X",
+      "result": {
+        "fileName": "a-b-c-d.md",
+        "base": "a-b-c-d",
+        "slug": "a-b-c-d"
+      }
+    }
+  ],
+  "collision": {
+    "fileName": "2026-11-22-fix-login-2.md",
+    "base": "2026-11-22-fix-login-2",
+    "slug": "fix-login"
+  },
+  "titles": [
+    {
+      "fileName": "2026-11-22-fix-login.md",
+      "title": "Fix login"
+    },
+    {
+      "fileName": "random_note.md",
+      "title": "Random note"
+    }
+  ]
+}

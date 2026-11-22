@@ -1,0 +1,52 @@
+{
+  "normalize": [
+    {
+      "input": "My Tag",
+      "tag": "my-tag"
+    },
+    {
+      "input": "#Nested/Child",
+      "tag": "nested/child"
+    },
+    {
+      "input": "a  b",
+      "tag": "a-b"
+    },
+    {
+      "input": "!!!",
+      "tag": ""
+    }
+  ],
+  "inline": [
+    "auth",
+    "auth/login",
+    "hash"
+  ],
+  "collected": [
+    "header",
+    "inline"
+  ],
+  "counts": [
+    [
+      "a",
+      2
+    ],
+    [
+      "a/b",
+      2
+    ],
+    [
+      "a/b/c",
+      1
+    ]
+  ],
+  "rename": {
+    "text": "See #work/x and #work and #projectile",
+    "count": 2
+  },
+  "remove": {
+    "text": "Use legacy here",
+    "count": 1
+  },
+  "body": "Working on #auth and #auth/login today\n```\n#notatag\n```\nInline `#code` span\nEmail test@example.com is not a tag\n#hash only counts a word with a letter\n#123 is not a tag"
+}
