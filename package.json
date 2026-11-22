@@ -1,0 +1,71 @@
+{
+  "name": "folium-notes",
+  "displayName": "Folium Notes",
+  "description": "Project notes for developers: shared notes in the repo, private notes outside it, in one view.",
+  "version": "0.1.0",
+  "publisher": "folium",
+  "license": "MIT",
+  "private": true,
+  "engines": {
+    "vscode": "^1.90.0",
+    "node": ">=20"
+  },
+  "categories": [
+    "Other",
+    "Notebooks"
+  ],
+  "keywords": [
+    "notes",
+    "markdown",
+    "tasks",
+    "templates",
+    "ai"
+  ],
+  "main": "./dist/extension.js",
+  "icon": "images/icon.png",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/folium-notes/folium-notes"
+  },
+  "capabilities": {
+    "untrustedWorkspaces": {
+      "supported": "limited",
+      "description": "In untrusted workspaces Folium Notes runs in limited mode: project-level settings that could redirect network calls (issues, Joplin, prompt commands) and note encryption are ignored."
+    },
+    "virtualWorkspaces": {
+      "supported": false,
+      "description": "Folium Notes needs file system access for notes, trash and code links."
+    }
+  },
+  "activationEvents": [
+    "onStartupFinished"
+  ],
+  "scripts": {
+    "gen": "node scripts/gen-contributions.mjs",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "build": "node scripts/gen-contributions.mjs && node esbuild.mjs",
+    "watch": "node esbuild.mjs --watch",
+    "test": "vitest run",
+    "test:unit": "vitest run test/unit",
+    "test:win": "cross-env-shell FOLIUM_TEST_WIN32=1 vitest run test/unit",
+    "test:integration": "npm run build && node ./test/integration/run.mjs",
+    "test:perf": "vitest run test/perf",
+    "fixtures": "node scripts/gen-fixtures.mjs",
+    "fixtures:check": "node scripts/gen-fixtures.mjs --check",
+    "package": "npm run build && node scripts/package.mjs",
+    "vscode:prepublish": "npm run build",
+    "verify": "npm run typecheck && npm run test:unit && npm run fixtures:check"
+  },
+  "dependencies": {
+    "yaml": "^2.8.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.10.2",
+    "@types/vscode": "^1.90.0",
+    "@vscode/test-electron": "^2.4.1",
+    "@vscode/vsce": "^3.2.1",
+    "esbuild": "^0.24.2",
+    "typescript": "^5.7.2",
+    "vitest": "^2.1.8"
+  }
+}
