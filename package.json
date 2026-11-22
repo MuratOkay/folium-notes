@@ -54,7 +54,7 @@
     "fixtures:check": "node scripts/gen-fixtures.mjs --check",
     "package": "npm run build && node scripts/package.mjs",
     "vscode:prepublish": "npm run build",
-    "verify": "npm run typecheck && npm run test:unit && npm run fixtures:check"
+    "verify": "npm run typecheck && npm run build && npm run test:unit && npm run fixtures:check"
   },
   "dependencies": {
     "yaml": "^2.8.1"

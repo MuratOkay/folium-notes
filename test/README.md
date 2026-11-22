@@ -61,5 +61,6 @@ real VS Code▶ test/integration/**         @vscode/test-electron (first/restart
 
 * Unit tests never touch your real notes: they use `fs.mkdtemp` folders and a throw-away home directory.
 * The MCP test builds its own temporary bundle from `src/mcp/server.ts`, so it does not depend on `dist/`.
-* `bundle.test.ts` needs `npm run build` first (CI builds before testing); `npm run verify` does not build.
+* `bundle.test.ts` builds `dist/extension.js` and `dist/mcp-server.js` on demand (with the same esbuild
+  options as `esbuild.mjs`), so it also works in a fresh clone; `npm run verify` builds before testing.
 * Integration tests are not part of `npm test` because they need a graphical session and download VS Code.
