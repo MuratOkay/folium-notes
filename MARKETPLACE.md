@@ -100,6 +100,12 @@ Folium Notes collects nothing. It does not include telemetry, a sync service or 
 requests happen only when you send a prompt, talk to Joplin or create an issue, and only with the
 credentials you configure.
 
+## Documentation
+
+[User guide](https://github.com/folium-notes/folium-notes/blob/main/USER_GUIDE.md) ·
+[File format](https://github.com/folium-notes/folium-notes/blob/main/spec/FORMAT.md) ·
+[Design notes](https://github.com/folium-notes/folium-notes/blob/main/DESIGN.md)
+
 ## Open format
 
 The note format is documented in `spec/FORMAT.md` and exported as fixtures so other IDEs can read and

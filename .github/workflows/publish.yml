@@ -1,0 +1,32 @@
+name: Publish
+
+on:
+  push:
+    tags: ['v*']
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    name: Publish to VS Code Marketplace
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run verify
+      - name: Package pre-release or stable
+        run: |
+          if [[ "${GITHUB_REF_NAME}" == *-pre* ]]; then
+            npm run package
+            echo 'PRERELEASE=--pre-release' >> "$GITHUB_ENV"
+          else
+            npm run package:stable
+          fi
+      - name: Publish (trusted publishing)
+        run: npx @vscode/vsce publish --oidc $PRERELEASE --skip-duplicate --packagePath dist/*.vsix

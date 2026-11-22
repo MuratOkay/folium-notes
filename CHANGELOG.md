@@ -32,6 +32,9 @@ First pre-release of Folium Notes for VS Code.
 * Import (Markdown/Obsidian, Joplin, Evernote), export (Obsidian/Joplin), Joplin sync, GitHub/GitLab/Jira
   issues, private-note backups.
 * Remote-window notices, getting-started walkthrough, status bar, keyboard shortcuts and 40+ settings.
+* Documentation: a full [USER_GUIDE.md](USER_GUIDE.md) (generated command/settings reference) and a
+  step-by-step [marketplace publishing guide](docs/PUBLISHING.md) with trusted-publishing (OIDC) CI.
+* Tags view checkboxes toggle the tag filter.
 * Manifest contributions pass the current VS Code extension schema: every view has an icon and walkthrough
   media no longer uses the unsupported `alt` property; the codebase has no unused imports or locals.
 * Incremental store refresh (stat-based reuse) and per-note task/tag caches: a 5,000-note refresh dropped

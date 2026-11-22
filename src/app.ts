@@ -136,6 +136,7 @@ export class FoliumApp implements vscode.Disposable {
     });
     this.treeViews = [notes, tags, tasks, related] as unknown as vscode.TreeView<unknown>[];
     this.notesTree.attach(notes);
+    this.tagsTree.attach(tags);
     this.tasksTree.attach(tasks);
     this.context.subscriptions.push(notes, tags, tasks, related);
   }

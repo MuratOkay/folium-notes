@@ -1,5 +1,9 @@
 # Publishing checklist
 
+For the full, command-by-command walkthrough see [PUBLISHING.md](PUBLISHING.md). The checklist below
+is the short version to run through on release day.
+
+
 ## Before the first publish
 
 - [ ] `npm ci` on a clean clone; `npm run verify` passes (typecheck, unit tests, fixtures check).

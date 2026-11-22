@@ -25,6 +25,7 @@ jobs:
       - run: git diff --exit-code
       - run: npm run test:unit
       - run: npm run fixtures:check
+      - run: npm run docs:check
 
   package:
     name: Package VSIX

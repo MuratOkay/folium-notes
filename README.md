@@ -80,8 +80,8 @@ View state (sort, grouping, filters) is stored per workspace, not in settings.
   disk and open decrypted only in the editor.
 * `prompts.customCommand` and `encryptSensitiveNotes` are user-level settings.
 
-Format: [spec/FORMAT.md](spec/FORMAT.md). Architecture: [DESIGN.md](DESIGN.md). Test plans:
-[docs/test-plans](docs/test-plans). Marketplace copy: [MARKETPLACE.md](MARKETPLACE.md).
+Documentation: [USER_GUIDE.md](USER_GUIDE.md) · [spec/FORMAT.md](spec/FORMAT.md) · [DESIGN.md](DESIGN.md) ·
+[docs/test-plans](docs/test-plans) · [publishing guide](docs/PUBLISHING.md) · [MARKETPLACE.md](MARKETPLACE.md).
 
 ## Development
 
@@ -92,8 +92,10 @@ npm run typecheck
 npm test                   # Vitest (unit, Windows simulation, 5,000-note perf, MCP protocol)
 npm run fixtures           # regenerate spec fixtures (TZ=UTC)
 npm run fixtures:check
+npm run docs:check         # USER_GUIDE.md reference tables
 npm run test:integration   # VS Code host tests (display or xvfb required)
 npm run package            # pre-release VSIX + companion zip
+npm run package:stable     # stable VSIX (same version, no pre-release flag)
 ```
 
 ## Status

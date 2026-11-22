@@ -16,6 +16,19 @@ export class TagsTreeProvider implements vscode.TreeDataProvider<TagNode> {
 
   constructor(private readonly app: FoliumApp) {}
 
+  attach(view: vscode.TreeView<TagNode>): void {
+    view.onDidChangeCheckboxState(async (event) => {
+      for (const [node, state] of event.items) {
+        if (node.kind !== 'tag' || !node.tag) continue;
+        const active = this.app.viewStateStore.get().filters.tags.includes(node.tag);
+        const wanted = state === vscode.TreeItemCheckboxState.Checked;
+        if (active !== wanted) {
+          await vscode.commands.executeCommand('folium.toggleTagFilter', node.tag);
+        }
+      }
+    });
+  }
+
   refresh(): void {
     this.changes.fire(undefined);
   }
@@ -72,8 +85,6 @@ export class TagsTreeProvider implements vscode.TreeDataProvider<TagNode> {
     item.tooltip = `#${tag} — ${count} note(s). Click to filter.`;
     item.accessibilityInformation = { label: `Tag ${tag}, ${count} notes${active ? ', filter active' : ''}` };
     item.command = { command: 'folium.toggleTagFilter', title: 'Toggle Tag Filter', arguments: [tag] };
-    if (active) item.checkboxState = vscode.TreeItemCheckboxState.Checked;
-    else item.checkboxState = vscode.TreeItemCheckboxState.Unchecked;
     item.checkboxState = active
       ? vscode.TreeItemCheckboxState.Checked
       : vscode.TreeItemCheckboxState.Unchecked;
