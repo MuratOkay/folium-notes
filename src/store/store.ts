@@ -147,6 +147,8 @@ export class FoliumStore {
   private linkIndexValue: LinkIndex = buildLinkIndex([]);
   private writeQueues = new Map<string, Promise<unknown>>();
   private writeTimes = new Map<string, number>();
+  private tasksCache: TaskItem[] = [];
+  private tagsCache: Map<string, number> = new Map();
   private readonly now: () => Date;
   private readonly newId: () => string;
   ready = false;
@@ -337,6 +339,23 @@ export class FoliumStore {
         scope: note.scope,
       })),
     );
+    const tasks: TaskItem[] = [];
+    for (const note of notes) {
+      if (note.encrypted) continue;
+      tasks.push(
+        ...parseTasks(note.raw, {
+          noteKey: note.key,
+          noteTitle: note.title,
+          scope: note.scope,
+          relPath: note.relPath,
+        }),
+      );
+    }
+    this.tasksCache = tasks;
+    const active = notes.filter((note) => !isArchived(note.meta));
+    this.tagsCache = countTags(
+      active.map((note) => collectTags(note.meta.tags, note.body, this.settings.inlineTags)),
+    );
   }
 
   get allNotes(): NoteFile[] {
@@ -406,23 +425,11 @@ export class FoliumStore {
   }
 
   get tasks(): TaskItem[] {
-    const out: TaskItem[] = [];
-    for (const note of this.allNotes) {
-      if (note.encrypted) continue;
-      out.push(
-        ...parseTasks(note.raw, {
-          noteKey: note.key,
-          noteTitle: note.title,
-          scope: note.scope,
-          relPath: note.relPath,
-        }),
-      );
-    }
-    return out;
+    return this.tasksCache;
   }
 
   tagCounts(): Map<string, number> {
-    return countTags(this.notes.map((note) => note.tags));
+    return this.tagsCache;
   }
 
   tagsOf(note: NoteFile): string[] {
@@ -435,7 +442,7 @@ export class FoliumStore {
 
   /** All tags including inline ones, for the Tags view. */
   allTags(): Map<string, number> {
-    return countTags(this.notes.map((note) => this.tagsOf(note)));
+    return this.tagsCache;
   }
 
   private async takenNames(dir: string): Promise<string[]> {

@@ -297,3 +297,61 @@ describe('backup and restore', () => {
     expect(second.conflicts.length).toBeGreaterThan(0);
   });
 });
+
+describe('code links, moves and Joplin ids', () => {
+  it('indexes notes by the code files they link to', async () => {
+    const store = await makeStore();
+    const codeDir = path.join(root, 'src');
+    await fs.mkdir(codeDir, { recursive: true });
+    const codeFile = path.join(codeDir, 'a.ts');
+    await fs.writeFile(codeFile, 'line1\nline2\nline3\n');
+    const note = await store.createNote({
+      scope: 'shared',
+      title: 'Linked',
+      body: '# Linked\n',
+    });
+    const { setFrontMatterField } = await import('../../src/core/frontmatter');
+    const raw = setFrontMatterField(note.raw, 'code', [{ path: '../src/a.ts', lines: '1-2', text: 'line1\nline2' }]);
+    await store.writeRaw(note, raw);
+    const linked = store.notesForCodeFile(codeFile);
+    expect(linked.map((item) => item.title)).toEqual(['Linked']);
+  });
+
+  it('moves a note between scopes and keeps the id', async () => {
+    const store = await makeStore();
+    const note = await store.createNote({ scope: 'private', title: 'Move me', tags: ['move'] });
+    const moved = await store.moveNote(note, 'shared');
+    expect(moved.scope).toBe('shared');
+    expect(moved.id).toBe(note.id);
+    expect(moved.absPath.startsWith(store.paths.sharedRoot)).toBe(true);
+    expect(await fs.stat(note.absPath).catch(() => null)).toBeNull();
+    expect(store.byKey(note.key)?.scope).toBe('shared');
+  });
+
+  it('replaces only the body and keeps header fields', async () => {
+    const store = await makeStore();
+    const note = await store.createNote({ scope: 'shared', title: 'Body test', tags: ['keep'] });
+    const updated = await store.replaceBody(note, '# Body test\n\nNew body.\n');
+    const raw = await fs.readFile(updated.absPath, 'utf8');
+    expect(raw).toContain('tags: [ keep ]');
+    expect(raw).toContain('New body.');
+    expect(updated.body).toContain('New body.');
+  });
+
+  it('tracks Joplin ids for duplicate detection', async () => {
+    const store = await makeStore();
+    const note = await store.createNote({ scope: 'shared', title: 'Joplin note' });
+    await store.setJoplinId(note, 'joplin-123');
+    const service = new FoliumProjectService(store);
+    expect(service.importedValues().ids.has('joplin-123')).toBe(true);
+    expect(store.projectState.notes[note.key]?.joplinId).toBe('joplin-123');
+  });
+
+  it('finds notes by path and scope-relative path', async () => {
+    const store = await makeStore();
+    const note = await store.createNote({ scope: 'shared', title: 'Lookup' });
+    expect(store.byPath(note.absPath)?.key).toBe(note.key);
+    expect(store.byRelPath('shared', note.relPath)?.key).toBe(note.key);
+    expect(store.noteForUri(note.key)?.title).toBe('Lookup');
+  });
+});

@@ -3,7 +3,7 @@
 import * as vscode from 'vscode';
 import path from 'node:path';
 import { FoliumProjectService, FoliumStore, type NoteFile } from './store/store';
-import { mergeSettings, type FoliumSettings } from './core/settings';
+import { DEFAULT_SETTINGS, mergeSettings, type FoliumSettings } from './core/settings';
 import { KeyManager } from './ui/keys';
 import { SecureFileSystem, SECURE_SCHEME, secureTargetPath, secureUri } from './ui/secureFs';
 import { ViewStateStore } from './ui/viewState';
@@ -290,7 +290,10 @@ export class FoliumApp implements vscode.Disposable {
       await this.restart();
       return;
     }
-    if (this.store) this.store.settings = this.settings;
+    if (this.store) {
+      this.store.settings = this.settings;
+      void this.store.refresh();
+    }
     this.refresh();
     this.statusBar.update();
   }
@@ -391,7 +394,7 @@ export class FoliumApp implements vscode.Disposable {
 export function readSettings(): FoliumSettings {
   const config = vscode.workspace.getConfiguration('foliumNotes');
   const get = <T>(key: string, fallback: T): T => config.get<T>(key) ?? fallback;
-  return mergeSettings({
+  const settings = mergeSettings({
     sharedFolder: get('sharedFolder', '.notes'),
     privateRoot: get('privateRoot', '~/FoliumNotes'),
     privateProjectKey: get('privateProjectKey', ''),
@@ -442,6 +445,18 @@ export function readSettings(): FoliumSettings {
     },
     joplin: { url: get('joplin.url', 'http://localhost:41184'), notebook: get('joplin.notebook', '') },
   });
+  if (!vscode.workspace.isTrusted) {
+    // Untrusted workspaces: ignore project settings that could redirect network calls.
+    settings.issues = { ...DEFAULT_SETTINGS.issues, provider: mergedIssuesProvider(settings) };
+    settings.joplin = { ...DEFAULT_SETTINGS.joplin };
+    settings.prompts.customCommand = '';
+  }
+  return settings;
+}
+
+function mergedIssuesProvider(settings: FoliumSettings): FoliumSettings['issues']['provider'] {
+  const provider = settings.issues.provider;
+  return provider === 'github' || provider === 'gitlab' || provider === 'jira' ? provider : '';
 }
 
 export function projectRelative(app: FoliumApp, absPath: string): string {

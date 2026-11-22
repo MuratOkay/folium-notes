@@ -198,7 +198,7 @@ export function codePermalink(
 }
 
 /** Notes that should never be sent to an issue tracker. */
-export function canPublishIssue(note: { sensitive: boolean; encrypted: boolean; meta?: NoteMeta }): boolean {
+export function canPublishIssue(note: { sensitive: boolean; encrypted?: boolean; meta?: NoteMeta }): boolean {
   return !note.sensitive && !note.encrypted && !(note.meta ? isArchived(note.meta) : false);
 }
 

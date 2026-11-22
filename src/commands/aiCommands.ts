@@ -175,6 +175,11 @@ export async function createFollowUpNote(
 ): Promise<string | undefined> {
   const store = app.store;
   if (!store) return undefined;
+  const { MAX_FOLLOWUP_BYTES } = await import('../core/followup');
+  if (Buffer.byteLength(content, 'utf8') > MAX_FOLLOWUP_BYTES) {
+    void vscode.window.showWarningMessage('Folium: the AI answer is too large to turn into a follow-up note.');
+    return undefined;
+  }
   const data = parseFollowUp(content);
   if (!hasFollowUpContent(data)) {
     void vscode.window.showWarningMessage('Folium: no questions, decisions or open items found in the AI answer.');
@@ -289,6 +294,7 @@ export async function connectAITools(app: FoliumApp): Promise<void> {
 export function startFollowUpInbox(app: FoliumApp): vscode.Disposable {
   const disposables: vscode.Disposable[] = [];
   let processing = false;
+  let watchedDir: string | undefined;
 
   const claim = async (file: string): Promise<string | undefined> => {
     const ide = (vscode.env.appName || 'ide').toLowerCase().replace(/[^a-z0-9]+/g, '-');
@@ -325,6 +331,10 @@ export function startFollowUpInbox(app: FoliumApp): vscode.Disposable {
       const inbox = app.store?.paths.inboxDir;
       if (!inbox) return;
       await fs.mkdir(inbox, { recursive: true });
+      if (inbox !== watchedDir) {
+        watchedDir = inbox;
+        startWatcher(inbox);
+      }
       const entries = await fs.readdir(inbox).catch(() => [] as string[]);
       for (const entry of entries) {
         if (!entry.endsWith('.json')) continue;
@@ -341,11 +351,7 @@ export function startFollowUpInbox(app: FoliumApp): vscode.Disposable {
     disposables.push(watcher);
   };
 
-  const inbox = app.store?.paths.inboxDir;
-  if (inbox) {
-    startWatcher(inbox);
-    void scan();
-  }
+  void scan();
 
   const timer = setInterval(() => {
     const currentInbox = app.store?.paths.inboxDir;

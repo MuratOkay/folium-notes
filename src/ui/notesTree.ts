@@ -35,6 +35,7 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
   private readonly changes = new vscode.EventEmitter<NotesNode | undefined>();
   readonly onDidChangeTreeData = this.changes.event;
   private view?: vscode.TreeView<NotesNode>;
+  private memo = new Map<string, unknown>();
 
   constructor(private readonly app: FoliumApp) {}
 
@@ -43,6 +44,7 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
   }
 
   refresh(): void {
+    this.memo.clear();
     this.changes.fire(undefined);
   }
 
@@ -52,6 +54,8 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
 
   /** Notes after filters, text search and sorting. */
   visibleNotes(): NoteFile[] {
+    const cached = this.memo.get('visible');
+    if (cached) return cached as NoteFile[];
     const store = this.store;
     if (!store) return [];
     const state = this.app.viewStateStore.get();
@@ -61,17 +65,23 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
       const keys = new Set(store.search(text, 500).map((hit) => hit.key));
       notes = notes.filter((note) => keys.has(note.key));
     }
-    return sortNotes(notes, state.sortBy, state.sortOrder, true);
+    const sorted = sortNotes(notes, state.sortBy, state.sortOrder, true);
+    this.memo.set('visible', sorted);
+    return sorted;
   }
 
   groups(): NoteGroup[] {
+    const cached = this.memo.get('groups');
+    if (cached) return cached as NoteGroup[];
     const state = this.app.viewStateStore.get();
     const notes = this.visibleNotes();
     const groups = groupNotes(notes, state.groupBy);
-    return groups.map((group) => ({
+    const sorted = groups.map((group) => ({
       ...group,
       notes: sortNotes(group.notes, state.sortBy, state.sortOrder, true),
     }));
+    this.memo.set('groups', sorted);
+    return sorted;
   }
 
   noteNode(key: string, groupId?: string): NotesNode {
@@ -160,19 +170,25 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
 
   /** Top-level tag nodes (tags without a parent). */
   private tagRoots(): NotesNode[] {
+    const cached = this.memo.get('tagRoots');
+    if (cached) return cached as NotesNode[];
     const tags = new Set<string>();
     for (const note of this.visibleNotes()) {
+      if (note.archived) continue;
       for (const tag of note.tags) tags.add(tag.split('/')[0]);
     }
-    return [...tags]
+    const roots = [...tags]
       .sort((a, b) => a.localeCompare(b))
       .map((tag) => ({ kind: 'tagGroup' as const, tag, label: tag, depth: 0 }));
+    this.memo.set('tagRoots', roots);
+    return roots;
   }
 
   private tagChildren(tag: string): string[] {
     const prefix = `${tag}/`;
     const children = new Set<string>();
     for (const note of this.visibleNotes()) {
+      if (note.archived) continue;
       for (const candidate of note.tags) {
         if (!candidate.startsWith(prefix)) continue;
         const rest = candidate.slice(prefix.length);
@@ -186,7 +202,7 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
   private notesWithTag(tag: string): NoteFile[] {
     const state = this.app.viewStateStore.get();
     return sortNotes(
-      this.visibleNotes().filter((note) => note.tags.includes(tag)),
+      this.visibleNotes().filter((note) => !note.archived && note.tags.includes(tag)),
       state.sortBy,
       state.sortOrder,
       true,
