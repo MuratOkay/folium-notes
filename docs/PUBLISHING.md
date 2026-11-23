@@ -140,7 +140,7 @@ Open `package.json` and check every field below before the first upload:
 | `version` | `0.1.0` | See §0: odd minor = pre-release, even minor = stable |
 | `engines.vscode` | `^1.90.0` | Minimum supported VS Code |
 | `icon` | `images/icon.png` | PNG, at least 128×128 (ours is 256×256); SVG is rejected |
-| `repository` | `https://github.com/folium-notes/folium-notes` | **Replace with the real repository URL** before publishing |
+| `repository` | `https://github.com/MuratOkay/folium-notes` | Matches `package.json` |
 | `license` | `MIT` + `LICENSE` | A license file must be included (ours is) |
 | `categories` | Other, Notebooks | At most three; keep them accurate |
 | `keywords` | 5 keywords | Marketplace allows at most **30** |
@@ -158,18 +158,26 @@ Open `package.json` and check every field below before the first upload:
 
 ### Screenshots
 
-`MARKETPLACE.md` currently points at https URLs under `raw.githubusercontent.com/folium-notes/folium-notes`.
-Before publishing either upload your screenshots there (or to a CDN) and keep the paths, or update the URLs.
-Capture real screenshots, not mockups:
+The real screenshots are committed as `images/screenshot-*.png` (1440×900 at 1.5×, 2160×1350).
+Refresh them with:
 
-1. **Notes view** — shared and private groups, a colored note, a pin, the filter summary line.
-2. **Code links** — a CodeLens with the note title above a snippet and the colored gutter dot.
-3. **Templates** — the template picker or Manage Templates list.
-4. **Tasks** — grouped tasks plus the status-bar bell.
-5. **AI follow-up** — a follow-up note with questions, `Answer:` slots and options.
+```bash
+npm run screenshots
+```
 
-Recommended: 1280×720 or larger, PNG, no personal data or tokens, dark and light variant if you want both.
-Verify each URL returns `200`:
+The script packages the extension, writes a fictional demo project to `/tmp/folio-demo`, launches an
+isolated VS Code profile with the Chrome DevTools protocol and drives the UI through seven scenes:
+
+1. **Notes view** — shared/private groups, colors, a pin, tasks and related notes (`screenshot-notes.png`).
+2. **AI follow-up** — questions, `Answer:` slots and options (`screenshot-ai-followup.png`).
+3. **Code links** — CodeLens with the note title and a colored gutter dot (`screenshot-code-links.png`).
+4. **Tasks** — grouped by due date with the release checklist open (`screenshot-tasks.png`).
+5. **Search** — title match and “create note with this title” (`screenshot-search.png`).
+6. **Templates** — the Terminal Prompts template (`screenshot-templates.png`).
+7. **Terminal Prompts** — the note beside the integrated terminal (`screenshot-terminal.png`).
+
+`MARKETPLACE.md` points at `https://raw.githubusercontent.com/MuratOkay/folium-notes/main/images/...`.
+After pushing, verify every URL returns `200`:
 
 ```bash
 for url in $(grep -o 'https://[^) ]*' MARKETPLACE.md | sort -u); do
@@ -177,8 +185,8 @@ for url in $(grep -o 'https://[^) ]*' MARKETPLACE.md | sort -u); do
 done
 ```
 
-(Our generated `images/walkthrough-*.svg` previews are used by the in-editor walkthrough, not by the
-marketplace readme, so the SVG restriction does not apply to them.)
+Marketplace images must be https PNG/JPG/GIF (SVG is rejected). Re-capture on Windows or macOS only if
+you need platform-specific UI; the committed captures are real VS Code, not mockups.
 
 ---
 

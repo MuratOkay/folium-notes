@@ -24,7 +24,7 @@
   "icon": "images/icon.png",
   "repository": {
     "type": "git",
-    "url": "https://github.com/folium-notes/folium-notes"
+    "url": "https://github.com/MuratOkay/folium-notes"
   },
   "capabilities": {
     "untrustedWorkspaces": {
@@ -52,6 +52,7 @@
     "fixtures": "node scripts/gen-fixtures.mjs",
     "fixtures:check": "node scripts/gen-fixtures.mjs --check",
     "package": "npm run build && node scripts/package.mjs",
+    "screenshots": "npm run package && node scripts/capture-screenshots.mjs",
     "vscode:prepublish": "npm run build",
     "verify": "npm run typecheck && npm run build && npm run test:unit && npm run fixtures:check && npm run docs:check",
     "docs": "node scripts/gen-docs.mjs",
@@ -259,14 +260,22 @@
         "icon": "$(checklist)"
       },
       {
+        "command": "folium.sendLineToTerminal",
+        "title": "Send Line to Terminal",
+        "category": "Folium",
+        "icon": "$(terminal)"
+      },
+      {
         "command": "folium.toggleDoneTasks",
         "title": "Show/Hide Done Tasks",
-        "category": "Folium"
+        "category": "Folium",
+        "icon": "$(check-all)"
       },
       {
         "command": "folium.tasksGroupBy",
         "title": "Group Tasks By…",
-        "category": "Folium"
+        "category": "Folium",
+        "icon": "$(list-unordered)"
       },
       {
         "command": "folium.toggleTagFilter",
@@ -739,6 +748,11 @@
           "group": "folium@3"
         },
         {
+          "command": "folium.sendLineToTerminal",
+          "when": "folium.isNote",
+          "group": "folium@0"
+        },
+        {
           "command": "folium.toggleTask",
           "when": "folium.isNote",
           "group": "folium@1"
@@ -759,6 +773,11 @@
           "command": "folium.sendAnswers",
           "when": "folium.followUpNote",
           "group": "navigation@1"
+        },
+        {
+          "command": "folium.sendLineToTerminal",
+          "when": "folium.isNote",
+          "group": "navigation@0"
         },
         {
           "command": "folium.saveAsTemplate",
@@ -824,6 +843,12 @@
         "command": "folium.toggleTask",
         "key": "alt+n x",
         "mac": "cmd+alt+n x",
+        "when": "folium.isNote"
+      },
+      {
+        "command": "folium.sendLineToTerminal",
+        "key": "alt+n enter",
+        "mac": "cmd+alt+n enter",
         "when": "folium.isNote"
       }
     ],
@@ -1196,7 +1221,7 @@
             "title": "Open the Notes view",
             "description": "Folium Notes adds a Notes view to the activity bar. Shared notes live in `.notes/` and are committed with the code; private notes live in your home folder.",
             "media": {
-              "markdown": "images/walkthrough-notes.svg"
+              "markdown": "images/screenshot-notes.png"
             }
           },
           {
@@ -1204,15 +1229,15 @@
             "title": "Create your first note",
             "description": "Create a shared note for the project, or a private note for yourself.\n[New Shared Note](command:folium.newSharedNote)",
             "media": {
-              "markdown": "images/walkthrough-create.svg"
+              "markdown": "images/screenshot-notes.png"
             }
           },
           {
             "id": "templates",
             "title": "Start from a template",
-            "description": "Ten built-in templates, plus team templates in `.notes/.templates` and your own in `~/FoliumNotes/.templates`.\n[Browse Templates](command:folium.browseTemplates)",
+            "description": "Eleven built-in templates, plus team templates in `.notes/.templates` and your own in `~/FoliumNotes/.templates`.\n[Browse Templates](command:folium.browseTemplates)",
             "media": {
-              "markdown": "images/walkthrough-templates.svg"
+              "markdown": "images/screenshot-templates.png"
             }
           },
           {
@@ -1220,7 +1245,15 @@
             "title": "Track tasks",
             "description": "Every `- [ ]` in a note shows up in the Tasks view, with due dates (`due:2026-11-22` or 📅).",
             "media": {
-              "markdown": "images/walkthrough-tasks.svg"
+              "markdown": "images/screenshot-tasks.png"
+            }
+          },
+          {
+            "id": "terminal",
+            "title": "Send a line to the terminal",
+            "description": "Keep install, build and test commands in a Terminal Prompts note. Send the current line or a selection to the integrated terminal; Markdown markers and `$` prompts are stripped first.",
+            "media": {
+              "markdown": "images/screenshot-terminal.png"
             }
           },
           {
@@ -1228,7 +1261,7 @@
             "title": "Work with AI safely",
             "description": "AI tools cannot read your notes. Send a prompt note to Copilot, Cline, Roo, Kilo or a custom target — private and sensitive notes are never sent.\n[Connect AI Tools](command:folium.connectAITools)",
             "media": {
-              "markdown": "images/walkthrough-ai.svg"
+              "markdown": "images/screenshot-ai-followup.png"
             }
           }
         ]

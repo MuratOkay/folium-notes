@@ -64,6 +64,48 @@ exports.run = async function run() {
       body: '# Encrypted note\n\nsecret: hunter2\n',
       transform: (raw) => raw,
     });
+    // Terminal Prompts: send a note line and a selection to the integrated terminal.
+    if (process.platform !== 'win32') {
+      const fsp = require('node:fs/promises');
+      const outFile = path.join(workspace, 'terminal-out.txt');
+      await fsp.rm(outFile, { force: true });
+      const lineCommand = "echo line-ok >> '" + outFile + "'";
+      const selectionCommand = "echo selection-ok >> '" + outFile + "'";
+      const terminalNote = await app.store.createNote({
+        scope: 'shared',
+        title: 'Terminal Prompts test',
+        body: '# Terminal Prompts test\n\n- ' + lineCommand + '\n- ' + selectionCommand + '\n',
+      });
+      await app.openNote(terminalNote);
+      const editor = vscode.window.activeTextEditor;
+      assert.ok(editor, 'terminal test note is open in an editor');
+      const lines = editor.document.getText().split(/\r?\n/);
+      const lineIndex = lines.findIndex((line) => line.includes('line-ok'));
+      assert.ok(lineIndex >= 0, 'terminal command line exists in the note');
+      const linePos = new vscode.Position(lineIndex, 0);
+      editor.selection = new vscode.Selection(linePos, linePos);
+      await vscode.commands.executeCommand('folium.sendLineToTerminal');
+      const selectionIndex = lines.findIndex((line) => line.includes('selection-ok'));
+      assert.ok(selectionIndex >= 0, 'terminal selection line exists in the note');
+      const start = new vscode.Position(selectionIndex, 0);
+      const end = new vscode.Position(selectionIndex, lines[selectionIndex].length);
+      editor.selection = new vscode.Selection(start, end);
+      await vscode.commands.executeCommand('folium.sendLineToTerminal');
+      let content = '';
+      let terminalOk = false;
+      for (let attempt = 0; attempt < 100; attempt++) {
+        content = await fsp.readFile(outFile, 'utf8').catch(() => '');
+        if (content.includes('line-ok') && content.includes('selection-ok')) {
+          terminalOk = true;
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 100));
+      }
+      assert.ok(terminalOk, 'note line and selection were sent to the terminal (content: ' + JSON.stringify(content) + ')');
+      await fsp.rm(outFile, { force: true });
+      console.log('[it] terminal prompt sent line + selection');
+    }
+
     fs.writeFileSync(path.join(workspace, '.it-marker'), note.key);
     assert.ok(encrypted.key, 'encrypted note created');
     console.log('[it] phase first finished');

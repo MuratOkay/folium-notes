@@ -3,7 +3,7 @@
 **Project notes for developers.** Shared notes live in `.notes/` and are committed with the code;
 private notes live outside the repository. One view, one search, one task list.
 
-![Folium Notes](https://raw.githubusercontent.com/folium-notes/folium-notes/main/images/icon.png)
+![Folium Notes](https://raw.githubusercontent.com/MuratOkay/folium-notes/main/images/icon.png)
 
 No telemetry. No servers. Just Markdown files you can read, diff and review.
 
@@ -19,7 +19,7 @@ they belong:
   staging?”.
 * **One view** merges both, without ever leaking private notes into shared ones.
 
-![Notes view](https://raw.githubusercontent.com/folium-notes/folium-notes/main/images/walkthrough-notes.png)
+![Notes view](https://raw.githubusercontent.com/MuratOkay/folium-notes/main/images/screenshot-notes.png)
 
 ## Highlights
 
@@ -30,19 +30,32 @@ text. Move the code around and **Update Code Links** finds it again: exact match
 first line, fuzzy match (≥ 75% similar) or a clear “lost” warning. CodeLens and a colored gutter dot show
 the note right above the code.
 
-![Code links](https://raw.githubusercontent.com/folium-notes/folium-notes/main/images/walkthrough-code.png)
+![Code links](https://raw.githubusercontent.com/MuratOkay/folium-notes/main/images/screenshot-code-links.png)
 
 ### Templates for the notes you write twice a week
 
 Bug investigations, meeting notes, decision records, manual test prerequisites, credentials, TILs,
-checklists, branch notes and AI prompts ship built-in. Add team templates in `.notes/.templates` and
-personal ones in `~/FoliumNotes/.templates`; for the same name team wins over personal, personal wins
-over built-in.
+checklists, branch notes, AI prompts and Terminal Prompts — eleven templates ship built-in. Add team
+templates in `.notes/.templates` and personal ones in `~/FoliumNotes/.templates`; for the same name team
+wins over personal, personal wins over built-in.
+
+![Templates](https://raw.githubusercontent.com/MuratOkay/folium-notes/main/images/screenshot-templates.png)
+
+### Terminal-ready commands
+
+Keep your install/build/test commands in a **Terminal Prompts** note and send any line straight to the
+integrated terminal with <kbd>Alt</kbd>+<kbd>N</kbd> then <kbd>Enter</kbd>. Markdown list markers, task
+checkboxes and `$` prompts are stripped first, and a selection becomes a small command script. No more
+copy/paste between notes and the shell.
+
+![Terminal Prompts](https://raw.githubusercontent.com/MuratOkay/folium-notes/main/images/screenshot-terminal.png)
 
 ### Tasks where you already write them
 
 `- [ ]` in any note becomes a task. Add `due:2026-11-22` or 📅 for due dates, group by note or due date,
 and get a 🔔 status bar reminder for overdue work. Ticking a task rewrites one character in the file.
+
+![Tasks](https://raw.githubusercontent.com/MuratOkay/folium-notes/main/images/screenshot-tasks.png)
 
 ### AI without giving away your notes
 
@@ -61,7 +74,7 @@ AI tools **cannot read** your notes. You choose what to send:
   and IDEs as base64 text.
 * Trash is per project and covers shared notes too; restore brings your colors and pins back.
 
-![AI follow-up](https://raw.githubusercontent.com/folium-notes/folium-notes/main/images/walkthrough-ai.png)
+![AI follow-up](https://raw.githubusercontent.com/MuratOkay/folium-notes/main/images/screenshot-ai-followup.png)
 
 ## Also included
 
@@ -102,9 +115,9 @@ credentials you configure.
 
 ## Documentation
 
-[User guide](https://github.com/folium-notes/folium-notes/blob/main/USER_GUIDE.md) ·
-[File format](https://github.com/folium-notes/folium-notes/blob/main/spec/FORMAT.md) ·
-[Design notes](https://github.com/folium-notes/folium-notes/blob/main/DESIGN.md)
+[User guide](https://github.com/MuratOkay/folium-notes/blob/main/USER_GUIDE.md) ·
+[File format](https://github.com/MuratOkay/folium-notes/blob/main/spec/FORMAT.md) ·
+[Design notes](https://github.com/MuratOkay/folium-notes/blob/main/DESIGN.md)
 
 ## Open format
 

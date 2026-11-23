@@ -11,8 +11,8 @@ is the short version to run through on release day.
 - [ ] `npm run test:integration` passes on Windows and macOS (needs a graphical session; use
       `xvfb-run -a npm run test:integration` on headless Linux).
 - [ ] Manual test plans executed: `docs/test-plans/vscode-windows.md`, `docs/test-plans/vscode-macos.md`.
-- [ ] Real screenshots captured at 2x on Windows and macOS and uploaded to the repository's `images/`
-      (or a CDN). Update the https URLs in `MARKETPLACE.md` — marketplace images must be https.
+- [x] Real screenshots captured with `npm run screenshots` into `images/screenshot-*.png` and referenced
+      from `MARKETPLACE.md` via public https URLs (re-capture on Windows/macOS if platform UI matters).
 - [ ] `MARKETPLACE.md` read end-to-end; verify every https image URL returns 200.
 - [ ] `CHANGELOG.md` has an entry for the version being published; the version in `package.json` matches.
 - [ ] `README.md` and `spec/FORMAT.md` describe every setting that exists in `package.json`.

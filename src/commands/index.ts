@@ -9,6 +9,7 @@ import * as ai from './aiCommands';
 import * as security from './securityCommands';
 import * as importExport from './importExportCommands';
 import * as branch from './branchCommands';
+import * as terminal from './terminalCommands';
 import * as help from './helpCommands';
 import { showSearch } from '../ui/search';
 import type { NoteFile } from '../store/store';
@@ -90,6 +91,7 @@ export function registerCommands(app: FoliumApp): void {
   });
   register('folium.toggleTask', async () => notes.toggleTaskAtCursor(app));
   register('folium.showTasks', async () => notes.showTasks());
+  register('folium.sendLineToTerminal', async () => terminal.sendLineToTerminal(app));
   register('folium.toggleDoneTasks', async () => notes.toggleDoneTasks(app));
   register('folium.tasksGroupBy', async () => notes.tasksGroupBy(app));
   register('folium.newFromSelection', async () => notes.newFromSelection(app));

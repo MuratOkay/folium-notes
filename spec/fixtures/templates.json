@@ -107,6 +107,18 @@
       "body": "# {{title}}\n\n## Task\n\n## Context\n\nFile: {{file}}\nLanguage: {{language}}\n\n```{{language}}\n{{selection}}\n```\n\n## Constraints\n\n{{cursor}}\n"
     },
     {
+      "name": "Terminal Prompts",
+      "description": "Shell commands you can send to the integrated terminal line by line.",
+      "tags": [
+        "terminal"
+      ],
+      "privateOnly": false,
+      "sharedOnly": false,
+      "sensitive": false,
+      "kind": "",
+      "body": "# {{title}}\n\nSend any line from this note to the integrated terminal with **Send Line to Terminal**\n(Alt+N then Enter, the editor context menu, or the Command Palette). List markers, blockquotes\nand `$` prompts are removed first; headings and code fence lines are ignored.\n\n## Install\n\n```bash\nnpm ci\n```\n\n## Build and test\n\n```bash\nnpm run build\nnpm test\n```\n\n## Useful commands\n\n- npm run lint\n- `git status --short`\n- $ npm outdated\n\n{{cursor}}\n"
+    },
+    {
       "name": "Other",
       "description": "An empty note.",
       "tags": [],

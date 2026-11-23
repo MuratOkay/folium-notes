@@ -271,7 +271,7 @@ new notes. Precedence for the same name: **team** (`<sharedFolder>/.templates`) 
 Built-ins: Bug investigation, Meeting notes, Decision record, Manual test
 prerequisites (`## Prerequisites` + bash block), Credentials (No/Name/Username/
 Password table, private only, sensitive, encrypted on create), Today I learned,
-Checklist, Branch note, AI prompt (shared only, `kind: prompt`), Other.
+Checklist, Branch note, AI prompt (shared only, `kind: prompt`), Terminal Prompts, Other.
 
 Placeholders: `{{title}}`, `{{date}}`, `{{time}}`, `{{datetime}}`, `{{user}}`
 (git `user.name`), `{{project}}`, `{{branch}}`, `{{ask:Question}}`,

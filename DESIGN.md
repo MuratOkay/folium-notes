@@ -111,5 +111,6 @@ personal state to the new key and rewrite wiki links when enabled.
 * The VS Code integration tests need a graphical session (use `xvfb-run` on headless Linux). On Linux
   without a keyring, SecretStorage is per-window, so the restart test skips only the key-persistence
   assertion (verified by a canary secret) and still checks notes, colors and pins.
-* Screenshots for the marketplace are generated previews (`images/walkthrough-*.svg`); real screenshots
-  must be captured on Windows/macOS before publishing (see `docs/publishing-checklist.md`).
+* Marketplace and guide screenshots are real Linux VS Code captures (`images/screenshot-*.png`),
+  reproducible with `npm run screenshots`; Windows/macOS captures can be added when platform-specific UI
+  needs to be shown.

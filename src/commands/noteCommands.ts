@@ -600,6 +600,7 @@ export async function statusMenu(app: FoliumApp): Promise<void> {
     { label: '$(lock) Encrypt note', command: 'folium.encryptNote' },
     { label: '$(globe) Move to other scope', command: 'folium.moveNote' },
     { label: '$(comment-discussion) Send as prompt', command: 'folium.sendPrompt' },
+    { label: '$(terminal) Send line to terminal', command: 'folium.sendLineToTerminal' },
     { label: '$(issue-opened) Create issue', command: 'folium.createIssue' },
   ];
   const picked = await vscode.window.showQuickPick(actions, { placeHolder: note.title });

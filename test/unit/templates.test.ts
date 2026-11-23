@@ -24,8 +24,18 @@ describe('built-in templates', () => {
       'Checklist',
       'Branch note',
       'AI prompt',
+      'Terminal Prompts',
       'Other',
     ]);
+  });
+
+  it('ships a Terminal Prompts template with sendable command lines', () => {
+    const terminal = BUILTIN_TEMPLATES.find((template) => template.name === 'Terminal Prompts')!;
+    expect(terminal.tags).toEqual(['terminal']);
+    expect(terminal.body).toContain('# {{title}}');
+    expect(terminal.body).toContain('npm test');
+    expect(terminal.body).toContain('{{cursor}}');
+    expect(terminal.body).toContain('```bash');
   });
 
   it('marks credentials private and sensitive and the AI prompt shared/prompt', () => {

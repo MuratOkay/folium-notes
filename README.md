@@ -3,6 +3,8 @@
 Project notes for developers: **shared notes inside the repository, private notes outside it, in one
 view.** A VS Code extension in TypeScript with no telemetry and no servers — notes are plain Markdown.
 
+![Folium Notes](images/screenshot-notes.png)
+
 ```
 my-project/.notes/                ← shared notes, committed with the code
 my-project/.notes/.templates/     ← team templates
@@ -24,10 +26,13 @@ my-project/.notes/.templates/     ← team templates
   Archive and Trash groups; drag & drop; multi-select; auto-reveal; tooltips and screen-reader labels.
 * **Search.** Title boost 3, tags 2, body 1, prefix matching, typo tolerance (~20% edits for terms over
   three characters), `#tag` filters, snippets, recent notes, “create a note with this title”.
-* **Templates.** Ten built-ins (Bug investigation, Meeting notes, Decision record, Manual test
-  prerequisites, Credentials, Today I learned, Checklist, Branch note, AI prompt, Other), team templates
+* **Templates.** Eleven built-ins (Bug investigation, Meeting notes, Decision record, Manual test
+  prerequisites, Credentials, Today I learned, Checklist, Branch note, AI prompt, Terminal Prompts, Other), team templates
   in `<sharedFolder>/.templates`, personal in `<privateRoot>/.templates`, team > personal > built-in.
   Placeholders, questions, prompt context, diagnostics, completion, hover and live preview.
+* **Terminal prompts.** Keep install/build/test commands in a note and send the current line (or a
+  selection) to the integrated terminal with **Send Line to Terminal**; Markdown markers and `$` prompts are
+  stripped first.
 * **Code links.** `{ path, lines, text, endText }` snippets resolve exact › moved › moved-first ›
   fuzzy (≥ 75%) › lost, with CodeLens, gutter dots, hover, new-note-from-selection, link selection and
   re-capture (`Update Code Links`).

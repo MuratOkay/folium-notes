@@ -131,6 +131,8 @@ workspace file; open a single folder if you want notes for a different project.
 
 ## 3. The interface
 
+![Folium Notes: shared and private notes, tags, tasks and related notes in one view](images/screenshot-notes.png)
+
 ### Notes view
 
 Shows shared and private notes together. By default they are grouped by scope; you can group by tag
@@ -319,6 +321,8 @@ With `autoReveal` on, the active note is revealed in the view when you switch ed
 
 **Folium: Search Notes** (<kbd>Alt</kbd>+<kbd>N</kbd> <kbd>S</kbd>) opens a live search box.
 
+![Search with a title match and a create-with-this-title action](images/screenshot-search.png)
+
 * Titles are weighted 3, tags 2 and body text 1. Every word must match somewhere.
 * Prefixes match (`redir` finds “redirect”); terms longer than three characters tolerate about 20% typos.
 * `#tag` tokens filter by tag, including children (`#auth` matches `auth/login`).
@@ -373,9 +377,30 @@ Use **Filter by Tag** in the palette for the same filter without opening the vie
 | Checklist | A single checklist |
 | Branch note | Branch name and a checklist for the branch |
 | AI prompt | **Shared only**, `kind: prompt`; fills selection/file/language |
+| Terminal Prompts | Shell commands you can send to the integrated terminal line by line |
 | Other | An empty note |
 
 Templates also apply their tags, color, `kind`, `target` and `sensitive` flag to the new note.
+
+![Choosing the Terminal Prompts template](images/screenshot-templates.png)
+
+### Terminal Prompts and sending lines to the terminal
+
+The **Terminal Prompts** template is a normal note containing shell commands. Put the cursor on a command
+line and run **Send Line to Terminal** (<kbd>Alt</kbd>+<kbd>N</kbd> then <kbd>Enter</kbd>, the editor context
+menu, the editor title action, or the status bar menu). Folium sends the line to the active integrated
+terminal (creating a “Folium Notes” terminal if needed) and presses Enter.
+
+* List markers, task checkboxes, blockquotes and shell prompts (`$`, `PS>`, `❯`) are removed first, so
+  `- [ ] npm test`, `> $ npm ci` and `` `git status` `` all send correctly.
+* Headings, code fence lines and empty lines are not sent; a short message explains why.
+* With a multi-line selection every usable line is sent in order (fences and headings are dropped).
+* The command only runs in notes, so it cannot fire while you edit code.
+
+The **Terminal Prompts** note is a good place to keep the commands you run every day (install, build, test,
+logs); no more copying and pasting between the note and the terminal.
+
+![Sending a note line to the integrated terminal](images/screenshot-terminal.png)
 
 ### Team and personal templates
 
@@ -485,6 +510,8 @@ so indentation changes do not break links.
 
 Turn these off with `codeLens` and `gutterIcons`.
 
+![A note title in the CodeLens, a colored gutter dot and related notes for the file](images/screenshot-code-links.png)
+
 ### Keeping links up to date
 
 **Update Code Links** re-captures every link of a note after refactoring. It uses the current resolution —
@@ -536,6 +563,8 @@ Any Markdown task outside code is collected:
 * The status bar bell shows overdue and due-today tasks when `tasks.statusBar` is on.
 
 Tasks inside fenced code blocks and inline code are ignored, so documentation examples do not become tasks.
+
+![Tasks grouped by due date, with the release checklist open](images/screenshot-tasks.png)
 
 ---
 
@@ -600,6 +629,8 @@ The parser understands a ```` ```followup ```` YAML block, `Questions`/`Decision
 `Option A:` lines and sentences ending in `?`. The note contains `- Answer:` slots and `- [ ]` options.
 Fill them in and run **Send Follow-up Answers**; the reply (answers, decisions, open items) is sent to the
 note’s target and the note is archived when `followUps.archiveWhenSent` is on.
+
+![A follow-up note with questions, answers and options](images/screenshot-ai-followup.png)
 
 ### MCP server (Cline, Roo, Kilo, Copilot, JetBrains)
 
@@ -902,6 +933,7 @@ user-facing commands (internal commands used by the views are omitted).
 | `folium.showNotesForFile` | Show Notes for File |
 | `folium.toggleTask` | Toggle Task at Cursor |
 | `folium.showTasks` | Show Tasks |
+| `folium.sendLineToTerminal` | Send Line to Terminal |
 | `folium.toggleDoneTasks` | Show/Hide Done Tasks |
 | `folium.tasksGroupBy` | Group Tasks By… |
 | `folium.filterByTag` | Filter by Tag |
@@ -959,6 +991,7 @@ Chords are two key presses: <kbd>Alt</kbd>+<kbd>N</kbd>, then the second key. On
 | `alt+n p` | `cmd+alt+n p` | Send Prompt |
 | `alt+n f` | `cmd+alt+n f` | Capture Follow-up from Clipboard |
 | `alt+n x` | `cmd+alt+n x` | Toggle Task at Cursor |
+| `alt+n enter` | `cmd+alt+n enter` | Send Line to Terminal |
 <!-- keybindings:end -->
 
 ---

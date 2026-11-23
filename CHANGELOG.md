@@ -15,7 +15,7 @@ First pre-release of Folium Notes for VS Code.
 * Search with title/tag/body weights, prefix and typo tolerance, `#tag` filters, snippets, recent notes
   and create-from-query.
 * Tags view with parent counts, filter toggling, rename/remove everywhere (children and inline tags).
-* Templates: ten built-ins, team/personal folders with precedence, placeholders (including questions and
+* Templates: eleven built-ins (including Terminal Prompts), team/personal folders with precedence, placeholders (including questions and
   prompt context), diagnostics, completion, hover, preview, create/save/manage/copy/customize.
 * Code links with exact/moved/moved-first/fuzzy/lost resolution, range growth via `endText`, CodeLens,
   gutter dots, hover, new-note-from-selection, link selection, re-capture and “notes for file”.
@@ -35,6 +35,11 @@ First pre-release of Folium Notes for VS Code.
 * Documentation: a full [USER_GUIDE.md](USER_GUIDE.md) (generated command/settings reference) and a
   step-by-step [marketplace publishing guide](docs/PUBLISHING.md) with trusted-publishing (OIDC) CI.
 * Tags view checkboxes toggle the tag filter.
+* New **Terminal Prompts** built-in template and **Send Line to Terminal** command (current note line or a
+  selection, with Markdown markers and `$` prompts stripped), covered by unit tests and an extension-host
+  integration test against a real terminal.
+* Real VS Code screenshots in `USER_GUIDE.md`, `README.md` and `MARKETPLACE.md`, captured with
+  `scripts/capture-screenshots.mjs` against an isolated profile.
 * Manifest contributions pass the current VS Code extension schema: every view has an icon and walkthrough
   media no longer uses the unsupported `alt` property; the codebase has no unused imports or locals.
 * Incremental store refresh (stat-based reuse) and per-note task/tag caches: a 5,000-note refresh dropped
