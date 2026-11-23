@@ -99,8 +99,8 @@ npm run fixtures           # regenerate spec fixtures (TZ=UTC)
 npm run fixtures:check
 npm run docs:check         # USER_GUIDE.md reference tables
 npm run test:integration   # VS Code host tests (display or xvfb required)
-npm run package            # pre-release VSIX + companion zip
-npm run package:stable     # stable VSIX (same version, no pre-release flag)
+npm run package            # VSIX + companion zip (stable for even minor versions)
+npm run package:stable     # force a stable VSIX (no pre-release flag)
 ```
 
 ## Status

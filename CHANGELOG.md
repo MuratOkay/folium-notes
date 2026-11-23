@@ -1,8 +1,8 @@
 # Changelog
 
-## 0.1.0 (pre-release)
+## 1.0.0
 
-First pre-release of Folium Notes for VS Code.
+First stable release of Folium Notes for VS Code, following the 0.1.0 pre-release.
 
 * Notes view with shared/private scopes, grouping (scope, nested tags, dates, colors), sorting, filters,
   filter summary, drag & drop, multi-select, archive and a per-project trash with restore.

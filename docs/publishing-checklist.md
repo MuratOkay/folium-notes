@@ -22,7 +22,7 @@ is the short version to run through on release day.
 
 ## Packaging
 
-- [ ] `npm run package` → `dist/folium-notes-<version>.vsix` (pre-release) and
+- [ ] `npm run package` → `dist/folium-notes-<version>.vsix` (stable for even minor versions) and
       `dist/folium-notes-<version>-companion.zip` (MCP server + spec + docs).
 - [ ] Install the VSIX on a clean VS Code profile (`--profile`), run the smoke section of the test plan.
 - [ ] Check the VSIX size and the packaged file list (`npx vsce ls --tree`).
@@ -30,7 +30,7 @@ is the short version to run through on release day.
 
 ## Publish
 
-- [ ] `npx vsce publish --pre-release --packagePath dist/folium-notes-<version>.vsix` (or upload via the
+- [ ] `npx vsce publish --packagePath dist/folium-notes-<version>.vsix` (or upload via the
       Marketplace web UI).
 - [ ] Verify the marketplace listing: title, description, categories, icon, screenshots, README rendering.
 - [ ] Install from the marketplace on Windows and macOS; confirm activation has no errors in the developer

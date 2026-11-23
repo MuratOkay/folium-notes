@@ -6,7 +6,7 @@ import path from 'node:path';
 import { createHash, randomUUID } from 'node:crypto';
 
 const SERVER_NAME = 'folium-notes';
-const SERVER_VERSION = '0.1.0';
+const SERVER_VERSION = '1.0.0';
 const MAX_CONTENT_BYTES = 200_000;
 const PROTOCOL_VERSION = '2024-11-05';
 

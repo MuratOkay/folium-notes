@@ -1,6 +1,6 @@
 # Test plan — Folium Notes on Windows (VS Code)
 
-Build: `npm ci && npm run build && npm run package`, install `dist/folium-notes-0.1.0.vsix` with
+Build: `npm ci && npm run build && npm run package`, install `dist/folium-notes-1.0.0.vsix` with
 `code --install-extension`.
 
 ## 1. Install and first run

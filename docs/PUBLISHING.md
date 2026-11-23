@@ -12,7 +12,7 @@ The extension identity is:
 | Publisher ID | `folium` (from `package.json`) |
 | Extension `name` | `folium-notes` |
 | Marketplace ID | `folium.folium-notes` |
-| Version | `0.1.0` (pre-release channel) |
+| Version | `1.0.0` (stable) |
 
 The publisher ID and the extension name are **permanent** once published, and both the `name` and the
 `displayName` must be globally unique on the Marketplace. Decide before the first upload.
@@ -23,19 +23,19 @@ The publisher ID and the extension name are **permanent** once published, and bo
 
 Two artifacts are produced by `npm run package`:
 
-* `dist/folium-notes-<version>.vsix` — the extension package. By default it is marked **pre-release**;
-  `npm run package:stable` builds the same VSIX without that flag.
+* `dist/folium-notes-<version>.vsix` — the extension package. `npm run package` follows the versioning
+  rule below (even minor = stable, odd minor = pre-release); `npm run package:stable` forces stable.
 * `dist/folium-notes-<version>-companion.zip` — MCP server, spec/fixtures, templates, user guide, docs.
   This is not a Marketplace artifact; attach it to the GitHub release.
 
 Marketplace version rules (official, and different from npm):
 
 * Only `major.minor.patch` is supported; `1.2.3-beta.1` style versions are rejected.
-* Pre-release and regular releases need **different versions**. If `0.1.0` is pre-release, the first stable
-  release must be something like `0.2.0` (never the same number).
+* Pre-release and regular releases need **different versions**. `1.0.0` is the first stable release; future
+  pre-releases should use an odd minor (for example `1.1.0`) and stable releases an even minor (`1.2.0`).
 * VS Code updates users to the highest available version, so a stable release can supersede a higher
-  pre-release. The recommendation is even minor numbers for stable (`0.2.x`) and odd minor numbers for
-  pre-release (`0.3.x`). This repository starts at `0.1.0` as a pre-release.
+  pre-release. The recommendation is even minor numbers for stable (`1.2.x`) and odd minor numbers for
+  pre-release (`1.1.x`). This repository is at `1.0.0` (stable); `v0.1.0-pre` remains in history.
 * Pre-release requires `engines.vscode` of at least `1.63`; Folium requires `^1.90`, so this is fine.
 
 Users opt in to pre-release per extension (Extensions view → the extension → **Switch to Pre-Release
@@ -137,7 +137,7 @@ Open `package.json` and check every field below before the first upload:
 | `name` | `folium-notes` | Permanent Marketplace id; keep it short |
 | `displayName` | `Folium Notes` | Must be unique on the Marketplace |
 | `description` | one sentence | Shown under the title and in search results |
-| `version` | `0.1.0` | See §0: odd minor = pre-release, even minor = stable |
+| `version` | `1.0.0` | See §0: odd minor = pre-release, even minor = stable |
 | `engines.vscode` | `^1.90.0` | Minimum supported VS Code |
 | `icon` | `images/icon.png` | PNG, at least 128×128 (ours is 256×256); SVG is rejected |
 | `repository` | `https://github.com/MuratOkay/folium-notes` | Matches `package.json` |
@@ -215,7 +215,7 @@ Finally install the built VSIX into a **fresh profile** and smoke test it:
 ```bash
 rm -rf /tmp/folio-profile /tmp/folio-ext
 code --user-data-dir=/tmp/folio-profile --extensions-dir=/tmp/folio-ext \\
-  --install-extension dist/folium-notes-0.1.0.vsix
+  --install-extension dist/folium-notes-1.0.0.vsix
 code --user-data-dir=/tmp/folio-profile --extensions-dir=/tmp/folio-ext /path/to/some/project
 ```
 
@@ -228,17 +228,17 @@ works for both scopes.
 ## 5. Build and inspect the package
 
 ```bash
-npm run package          # pre-release VSIX + companion zip
-npm run package:stable   # stable VSIX (same version) + companion zip
+npm run package          # VSIX + companion zip (stable for 1.0.0)
+npm run package:stable   # force a stable VSIX (same version) + companion zip
 ```
 
 Inspect what is inside before uploading:
 
 ```bash
 npx @vscode/vsce ls --tree
-dist/folium-notes-0.1.0.vsix   # 53 files, ~196 KB
-unzip -p dist/folium-notes-0.1.0.vsix extension.vsixmanifest | grep -i -E 'Identity|PreRelease'
-unzip -p dist/folium-notes-0.1.0.vsix extension/readme.md | head -5   # must be MARKETPLACE.md
+dist/folium-notes-1.0.0.vsix   # 56 files, ~1.45 MB
+unzip -p dist/folium-notes-1.0.0.vsix extension.vsixmanifest | grep -i -E 'Identity|PreRelease'
+unzip -p dist/folium-notes-1.0.0.vsix extension/readme.md | head -5   # must be MARKETPLACE.md
 ```
 
 The manifest must contain `Id="folium-notes" Publisher="folium"` and, for a pre-release,
@@ -248,7 +248,7 @@ excluded by `.vscodeignore`.
 
 ---
 
-## 6. Publish the first pre-release
+## 6. Publish the first stable release
 
 Pick one of these, depending on your authentication choice from §2.
 
@@ -257,17 +257,17 @@ Pick one of these, depending on your authentication choice from §2.
 Commit `.github/workflows/publish.yml` (see §9), create a tag, and let GitHub Actions publish:
 
 ```bash
-git tag v0.1.0-pre
-git push origin v0.1.0-pre
+git tag v1.0.0
+git push origin v1.0.0
 ```
 
-The workflow runs `npx @vscode/vsce publish --oidc --pre-release --packagePath dist/folium-notes-0.1.0.vsix`.
+The workflow packages with `npm run package:stable` and publishes with `npx @vscode/vsce publish --oidc --packagePath dist/folium-notes-1.0.0.vsix`.
 
 ### Option B — Microsoft Entra ID on this machine
 
 ```bash
-npx @vscode/vsce publish --azure-credential --pre-release \\
-  --packagePath dist/folium-notes-0.1.0.vsix
+npx @vscode/vsce publish --azure-credential \
+  --packagePath dist/folium-notes-1.0.0.vsix
 ```
 
 A browser window asks you to sign in; no PAT is stored.
@@ -276,35 +276,36 @@ A browser window asks you to sign in; no PAT is stored.
 
 ```bash
 npx @vscode/vsce login folium        # paste a Marketplace (Manage) PAT
-npx @vscode/vsce publish --pre-release --packagePath dist/folium-notes-0.1.0.vsix
+npx @vscode/vsce publish --packagePath dist/folium-notes-1.0.0.vsix
 ```
 
 ### Option D — manual upload
 
 Marketplace → Manage publishers & extensions → **New extension** → **Visual Studio Code** → upload the
-VSIX. The pre-release flag inside the package is preserved.
+VSIX. The stable/pre-release flag inside the package is preserved.
 
 Then verify:
 
 1. The listing appears (search can take a few minutes to update).
-2. `code --install-extension folium.folium-notes --pre-release` installs it.
-3. In the Extensions view the extension offers **Switch to Pre-Release Version**.
+2. `code --install-extension folium.folium-notes` installs the stable release.
+3. The Extensions view shows the stable version (no pre-release switch is offered until a pre-release exists).
 4. The marketplace page renders the readme images (https) and the changelog.
 
-### Publish a stable release later
+### Publish a future pre-release
 
-1. Bump to an even minor version (`0.2.0`), e.g. `npm version 0.2.0 --no-git-tag-version`.
+1. Bump to an odd minor version (for example `1.1.0`), e.g. `npm version 1.1.0 --no-git-tag-version`.
 2. Update `CHANGELOG.md` and `MARKETPLACE.md` if needed.
-3. Run the gates in §4, then `npm run package:stable`.
-4. Publish **without** `--pre-release`:
+3. Run the gates in §4, then `npm run package` (auto-detects pre-release for odd minor versions).
+4. Publish with `--pre-release`:
 
 ```bash
-npx @vscode/vsce publish --azure-credential --packagePath dist/folium-notes-0.2.0.vsix
+npx @vscode/vsce publish --azure-credential --pre-release \
+  --packagePath dist/folium-notes-1.1.0.vsix
 # or --oidc in CI, or --pat/VSCE_PAT with a legacy PAT
 ```
 
-Users on the pre-release channel are updated to the higher stable version automatically; users who want
-future pre-releases remain opted in.
+Users opt in to the pre-release channel; later stable releases use an even minor version (`1.2.0`) and
+`npm run package:stable`.
 
 ---
 
@@ -313,7 +314,7 @@ future pre-releases remain opted in.
 1. Tag the release in git and push the tag:
 
 ```bash
-git tag v0.1.0-pre
+git tag v1.0.0
 git push origin main --tags
 ```
 
@@ -343,7 +344,7 @@ Attach it to the GitHub release (it is not a Marketplace artifact) and mention i
 workflow file name `publish.yml`, then push a tag:
 
 ```bash
-git tag v0.1.0-pre && git push origin v0.1.0-pre
+git tag v1.0.0 && git push origin v1.0.0
 ```
 
 The workflow runs the gates, packages a pre-release for `*-pre` tags and a stable build for other tags, and

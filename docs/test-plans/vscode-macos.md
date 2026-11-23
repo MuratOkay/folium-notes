@@ -1,6 +1,6 @@
 # Test plan — Folium Notes on macOS (VS Code)
 
-Install `dist/folium-notes-0.1.0.vsix` (`code --install-extension`). Use a case-insensitive APFS volume for
+Install `dist/folium-notes-1.0.0.vsix` (`code --install-extension`). Use a case-insensitive APFS volume for
 the workspace (the default).
 
 ## 1. Shortcuts and menus

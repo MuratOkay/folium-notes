@@ -1,14 +1,15 @@
 #!/usr/bin/env node
-/** Package the VSIX (pre-release) and a companion zip with the MCP server + spec. */
+/** Package the VSIX (stable for even minor versions) and a companion zip with the MCP server + spec. */
 import { execFileSync } from 'node:child_process';
 import fs from 'node:fs/promises';
 import path from 'node:path';
 import os from 'node:os';
 
 const root = path.resolve(import.meta.dirname, '..');
-const stable = process.argv.includes('--stable');
 const pkg = JSON.parse(await fs.readFile(path.join(root, 'package.json'), 'utf8'));
 const outDir = path.join(root, 'dist');
+const minor = Number(pkg.version.split('.')[1] ?? 0);
+const stable = process.argv.includes('--stable') || (!process.argv.includes('--pre-release') && minor % 2 === 0);
 await fs.mkdir(outDir, { recursive: true });
 
 const vsix = path.join(outDir, `${pkg.name}-${pkg.version}.vsix`);

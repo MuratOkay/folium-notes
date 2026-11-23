@@ -102,7 +102,7 @@ editing one field never rewrites the rest of the file.
 From the Marketplace: search for **Folium Notes** and install it. From a VSIX file:
 
 ```bash
-code --install-extension folium-notes-0.1.0.vsix
+code --install-extension folium-notes-1.0.0.vsix
 ```
 
 ### First run

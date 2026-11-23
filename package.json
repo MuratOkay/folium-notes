@@ -2,7 +2,7 @@
   "name": "folium-notes",
   "displayName": "Folium Notes",
   "description": "Project notes for developers: shared notes in the repo, private notes outside it, in one view.",
-  "version": "0.1.0",
+  "version": "1.0.0",
   "publisher": "folium",
   "license": "MIT",
   "engines": {
