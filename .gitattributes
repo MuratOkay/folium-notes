@@ -1,0 +1,6 @@
+# Keep text files LF on every platform so fixtures/docs comparisons are stable in CI.
+* text=auto eol=lf
+*.png binary
+*.vsix binary
+*.zip binary
+*.tar binary

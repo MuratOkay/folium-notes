@@ -79,7 +79,9 @@ One-time setup:
    * **Environment**: leave empty unless the workflow uses a GitHub environment
 3. For a **private** repository, run the workflow within 48 hours: the first successful token exchange
    activates the policy permanently.
-4. The workflow must request an OIDC token and publish with vsce 4.x:
+4. Add a repository variable **`PUBLISH_ENABLED=true`** (Settings → Secrets and variables → Actions →
+   Variables). Until it exists the publish job is skipped, so tagging a release does not create a failed run.
+5. The workflow must request an OIDC token and publish with vsce 4.x:
 
 ```yaml
 permissions:

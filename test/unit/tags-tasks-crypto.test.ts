@@ -263,7 +263,8 @@ describe('tar interoperability', () => {
       ]),
     );
     const listing = execFileSync('tar', ['-tf', file], { encoding: 'utf8' });
-    expect(listing.trim().split('\n')).toEqual(['Folium-backup.json', longName]);
+    // Windows tar.exe emits CRLF; normalize before comparing.
+    expect(listing.trim().split(/\r?\n/)).toEqual(['Folium-backup.json', longName]);
     fsMod.rmSync(dir, { recursive: true, force: true });
   });
 

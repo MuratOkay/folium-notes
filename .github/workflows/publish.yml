@@ -12,9 +12,12 @@ jobs:
   publish:
     name: Publish to VS Code Marketplace
     runs-on: ubuntu-latest
+    # Enable only after the publisher, PAT/Entra/OIDC policy and repository variable exist.
+    # Tag pushes are skipped (not failed) until you set PUBLISH_ENABLED=true.
+    if: vars.PUBLISH_ENABLED == 'true'
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v7
+      - uses: actions/setup-node@v7
         with:
           node-version: 22
           cache: npm

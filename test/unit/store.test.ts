@@ -8,6 +8,15 @@ import { mergeSettings } from '../../src/core/settings';
 let root: string;
 let home: string;
 
+async function waitFor(predicate: () => boolean, timeoutMs = 3000): Promise<boolean> {
+  const start = Date.now();
+  while (Date.now() - start < timeoutMs) {
+    if (predicate()) return true;
+    await new Promise((resolve) => setTimeout(resolve, 15));
+  }
+  return predicate();
+}
+
 async function makeStore(overrides: Record<string, unknown> = {}): Promise<FoliumStore> {
   const store = new FoliumStore({
     projectRoot: root,
@@ -220,11 +229,9 @@ describe('overlay, search and tasks', () => {
     const store = await makeStore();
     const note = await store.createNote({ scope: 'shared', title: 'Live' });
     store.setOverlay(note.absPath, note.raw.replace('title: Live', 'title: Live edited'));
-    await new Promise((resolve) => setTimeout(resolve, 30));
-    expect(store.byKey(note.key)?.title).toBe('Live edited');
+    expect(await waitFor(() => store.byKey(note.key)?.title === 'Live edited')).toBe(true);
     store.clearOverlay(note.absPath);
-    await new Promise((resolve) => setTimeout(resolve, 30));
-    expect(store.byKey(note.key)?.title).toBe('Live');
+    expect(await waitFor(() => store.byKey(note.key)?.title === 'Live')).toBe(true);
   });
 
   it('searches titles, tags and bodies', async () => {
