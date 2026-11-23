@@ -588,12 +588,13 @@ class TemplateFeatures implements vscode.CompletionItemProvider, vscode.HoverPro
 
 class TaskMarkDecorator implements vscode.Disposable {
   private readonly decoration = vscode.window.createTextEditorDecorationType({
+    // Hide the `x` inside `[x]` and render the check mark in its place.
+    textDecoration: 'none; display: none;',
     after: {
-      contentText: ' ✓',
+      contentText: '✓',
       color: new vscode.ThemeColor('charts.green'),
       fontStyle: 'normal',
     },
-    textDecoration: 'none',
   });
   private readonly disposables: vscode.Disposable[] = [];
   private timer?: NodeJS.Timeout;
@@ -626,9 +627,8 @@ class TaskMarkDecorator implements vscode.Disposable {
         relPath: note.relPath,
       }).filter((task) => task.done);
       const ranges = done.map((task) => {
-        const line = Math.max(0, Math.min(task.line - 1, editor.document.lineCount - 1));
-        const length = editor.document.lineAt(line).text.length;
-        return new vscode.Range(line, 0, line, length);
+        const start = editor.document.positionAt(task.offset);
+        return new vscode.Range(start, new vscode.Position(start.line, start.character + 1));
       });
       editor.setDecorations(this.decoration, ranges);
     }

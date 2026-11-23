@@ -67,7 +67,7 @@ All settings are under `foliumNotes.*` (user or `.vscode/settings.json`).
 | `shareColors` | `false` | Store shared-note colors in the file |
 | `trashRetentionDays` | `30` | 0 keeps everything |
 | `branchNotes.onBranchSwitch` | `notify` | `none`/`notify`/`open`/`create` |
-| `tasks.showCheckMarks` | `true` | ✓ after done tasks |
+| `tasks.showCheckMarks` | `true` | `[✓]` for done tasks |
 | `codeLens`, `gutterIcons`, `linkDiagnostics` | `true` | Editor integration |
 | `encryptSensitiveNotes` | `false` | User-level setting only |
 | `prompts.defaultTarget` | `copilot` | copilot/cline/roo/kilo/continue/claude/codex/jetbrains/custom |

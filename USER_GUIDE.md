@@ -559,7 +559,7 @@ Any Markdown task outside code is collected:
 * The Tasks view groups by due date or by note; **Show/Hide Done Tasks** switches completed tasks on/off.
 * Ticking a task (checkbox in the view, **Toggle Task at Cursor**, or <kbd>Alt</kbd>+<kbd>N</kbd> <kbd>X</kbd>)
   rewrites only the status character in the file.
-* Done tasks can be marked with a ✓ in the editor (`tasks.showCheckMarks`).
+* Done tasks are shown as `[✓]` in the editor (`tasks.showCheckMarks`); the file still contains `[x]`.
 * The status bar bell shows overdue and due-today tasks when `tasks.statusBar` is on.
 
 Tasks inside fenced code blocks and inline code are ignored, so documentation examples do not become tasks.
@@ -847,7 +847,7 @@ can be restored with **Reset View State**.
 
 | Setting | Default | Scope | Description |
 | --- | --- | --- | --- |
-| `tasks.showCheckMarks` | `true` | window | Show a ✓ after done tasks in the editor. |
+| `tasks.showCheckMarks` | `true` | window | Show done tasks as [✓] in the editor. |
 | `tasks.statusBar` | `true` | window | Show a bell in the status bar when tasks are due or overdue. |
 
 ### Branch notes
@@ -900,77 +900,77 @@ can be restored with **Reset View State**.
 
 ## 19. Commands and keyboard shortcuts
 
-The Command Palette lists every command under the **Folium** category. The table below contains the
+The Command Palette lists every command with a **Folium:** prefix. The table below contains the
 user-facing commands (internal commands used by the views are omitted).
 
 <!-- commands:start -->
 | Command | What it does |
 | --- | --- |
-| `folium.newNote` | New Note |
-| `folium.newSharedNote` | New Shared Note |
-| `folium.newPrivateNote` | New Private Note |
-| `folium.newFromTemplate` | New Note from Template |
-| `folium.browseTemplates` | Browse Templates |
-| `folium.createTemplate` | Create Template |
-| `folium.saveAsTemplate` | Save Note as Template |
-| `folium.manageTemplates` | Manage Templates |
-| `folium.previewTemplate` | Preview Template |
-| `folium.search` | Search Notes |
-| `folium.setColor` | Set Note Color |
-| `folium.togglePin` | Toggle Pin |
-| `folium.archive` | Archive Note |
-| `folium.unarchive` | Unarchive Note |
-| `folium.renameNote` | Rename Note |
-| `folium.duplicateNote` | Duplicate Note |
-| `folium.moveNote` | Move Note to Other Scope |
-| `folium.editTags` | Edit Note Tags |
-| `folium.trashNote` | Move Note to Trash |
-| `folium.restoreTrash` | Restore Note from Trash |
-| `folium.emptyTrash` | Empty Trash |
-| `folium.newFromSelection` | New Note from Selection |
-| `folium.linkSelection` | Link Selection to Note |
-| `folium.updateCodeLinks` | Update Code Links |
-| `folium.showNotesForFile` | Show Notes for File |
-| `folium.toggleTask` | Toggle Task at Cursor |
-| `folium.showTasks` | Show Tasks |
-| `folium.sendLineToTerminal` | Send Line to Terminal |
-| `folium.toggleDoneTasks` | Show/Hide Done Tasks |
-| `folium.tasksGroupBy` | Group Tasks By… |
-| `folium.filterByTag` | Filter by Tag |
-| `folium.filterByColor` | Filter by Color |
-| `folium.filterByDate` | Filter by Date |
-| `folium.filterByScope` | Filter by Scope |
-| `folium.filterByText` | Filter by Text |
-| `folium.setTagFilterMode` | Tag Filter Mode (Any/All) |
-| `folium.clearFilters` | Clear Filters |
-| `folium.showFilters` | Show Active Filters |
-| `folium.groupBy` | Group Notes By… |
-| `folium.sortBy` | Sort Notes By… |
-| `folium.sortOrder` | Toggle Sort Order |
-| `folium.renameTag` | Rename Tag Everywhere |
-| `folium.removeTag` | Remove Tag Everywhere |
-| `folium.sendPrompt` | Send Prompt |
-| `folium.saveAsCopilotPrompt` | Save as Copilot Prompt File |
-| `folium.captureFollowUp` | Capture Follow-up from Clipboard |
-| `folium.sendAnswers` | Send Follow-up Answers |
-| `folium.connectAITools` | Connect AI Tools |
-| `folium.encryptNote` | Encrypt Note |
-| `folium.decryptNote` | Decrypt Note |
-| `folium.backupKey` | Back Up Encryption Key |
-| `folium.restoreKey` | Restore Encryption Key |
-| `folium.backupPrivate` | Back Up Private Notes |
-| `folium.restorePrivate` | Restore Private Notes |
-| `folium.configurePrivateRoot` | Set Private Notes Folder |
-| `folium.openPrivateFolder` | Open Private Notes Folder |
-| `folium.resetViewState` | Reset View State |
-| `folium.importNotes` | Import Notes |
-| `folium.exportNotes` | Export Notes |
-| `folium.sendToJoplin` | Send to Joplin |
-| `folium.createIssue` | Create Issue from Note |
-| `folium.branchNote` | Branch Note |
-| `folium.gettingStarted` | Getting Started |
-| `folium.refresh` | Refresh Notes |
-| `folium.showLog` | Show Log |
+| `folium.newNote` | Folium: New Note |
+| `folium.newSharedNote` | Folium: New Shared Note |
+| `folium.newPrivateNote` | Folium: New Private Note |
+| `folium.newFromTemplate` | Folium: New Note from Template |
+| `folium.browseTemplates` | Folium: Browse Templates |
+| `folium.createTemplate` | Folium: Create Template |
+| `folium.saveAsTemplate` | Folium: Save Note as Template |
+| `folium.manageTemplates` | Folium: Manage Templates |
+| `folium.previewTemplate` | Folium: Preview Template |
+| `folium.search` | Folium: Search Notes |
+| `folium.setColor` | Folium: Set Note Color |
+| `folium.togglePin` | Folium: Toggle Pin |
+| `folium.archive` | Folium: Archive Note |
+| `folium.unarchive` | Folium: Unarchive Note |
+| `folium.renameNote` | Folium: Rename Note |
+| `folium.duplicateNote` | Folium: Duplicate Note |
+| `folium.moveNote` | Folium: Move Note to Other Scope |
+| `folium.editTags` | Folium: Edit Note Tags |
+| `folium.trashNote` | Folium: Move Note to Trash |
+| `folium.restoreTrash` | Folium: Restore Note from Trash |
+| `folium.emptyTrash` | Folium: Empty Trash |
+| `folium.newFromSelection` | Folium: New Note from Selection |
+| `folium.linkSelection` | Folium: Link Selection to Note |
+| `folium.updateCodeLinks` | Folium: Update Code Links |
+| `folium.showNotesForFile` | Folium: Show Notes for File |
+| `folium.toggleTask` | Folium: Toggle Task at Cursor |
+| `folium.showTasks` | Folium: Show Tasks |
+| `folium.sendLineToTerminal` | Folium: Send Line to Terminal |
+| `folium.toggleDoneTasks` | Folium: Show/Hide Done Tasks |
+| `folium.tasksGroupBy` | Folium: Group Tasks By… |
+| `folium.filterByTag` | Folium: Filter by Tag |
+| `folium.filterByColor` | Folium: Filter by Color |
+| `folium.filterByDate` | Folium: Filter by Date |
+| `folium.filterByScope` | Folium: Filter by Scope |
+| `folium.filterByText` | Folium: Filter by Text |
+| `folium.setTagFilterMode` | Folium: Tag Filter Mode (Any/All) |
+| `folium.clearFilters` | Folium: Clear Filters |
+| `folium.showFilters` | Folium: Show Active Filters |
+| `folium.groupBy` | Folium: Group Notes By… |
+| `folium.sortBy` | Folium: Sort Notes By… |
+| `folium.sortOrder` | Folium: Toggle Sort Order |
+| `folium.renameTag` | Folium: Rename Tag Everywhere |
+| `folium.removeTag` | Folium: Remove Tag Everywhere |
+| `folium.sendPrompt` | Folium: Send Prompt |
+| `folium.saveAsCopilotPrompt` | Folium: Save as Copilot Prompt File |
+| `folium.captureFollowUp` | Folium: Capture Follow-up from Clipboard |
+| `folium.sendAnswers` | Folium: Send Follow-up Answers |
+| `folium.connectAITools` | Folium: Connect AI Tools |
+| `folium.encryptNote` | Folium: Encrypt Note |
+| `folium.decryptNote` | Folium: Decrypt Note |
+| `folium.backupKey` | Folium: Back Up Encryption Key |
+| `folium.restoreKey` | Folium: Restore Encryption Key |
+| `folium.backupPrivate` | Folium: Back Up Private Notes |
+| `folium.restorePrivate` | Folium: Restore Private Notes |
+| `folium.configurePrivateRoot` | Folium: Set Private Notes Folder |
+| `folium.openPrivateFolder` | Folium: Open Private Notes Folder |
+| `folium.resetViewState` | Folium: Reset View State |
+| `folium.importNotes` | Folium: Import Notes |
+| `folium.exportNotes` | Folium: Export Notes |
+| `folium.sendToJoplin` | Folium: Send to Joplin |
+| `folium.createIssue` | Folium: Create Issue from Note |
+| `folium.branchNote` | Folium: Branch Note |
+| `folium.gettingStarted` | Folium: Getting Started |
+| `folium.refresh` | Folium: Refresh Notes |
+| `folium.showLog` | Folium: Show Log |
 <!-- commands:end -->
 
 ### Keyboard
@@ -982,16 +982,16 @@ Chords are two key presses: <kbd>Alt</kbd>+<kbd>N</kbd>, then the second key. On
 <!-- keybindings:start -->
 | Windows / Linux | macOS | Action |
 | --- | --- | --- |
-| `alt+n n` | `cmd+alt+n n` | New Note |
-| `alt+n t` | `cmd+alt+n t` | New Note from Template |
-| `alt+n s` | `cmd+alt+n s` | Search Notes |
-| `alt+n c` | `cmd+alt+n c` | New Note from Selection |
-| `alt+n l` | `cmd+alt+n l` | Link Selection to Note |
-| `alt+n b` | `cmd+alt+n b` | Branch Note |
-| `alt+n p` | `cmd+alt+n p` | Send Prompt |
-| `alt+n f` | `cmd+alt+n f` | Capture Follow-up from Clipboard |
-| `alt+n x` | `cmd+alt+n x` | Toggle Task at Cursor |
-| `alt+n enter` | `cmd+alt+n enter` | Send Line to Terminal |
+| `alt+n n` | `cmd+alt+n n` | Folium: New Note |
+| `alt+n t` | `cmd+alt+n t` | Folium: New Note from Template |
+| `alt+n s` | `cmd+alt+n s` | Folium: Search Notes |
+| `alt+n c` | `cmd+alt+n c` | Folium: New Note from Selection |
+| `alt+n l` | `cmd+alt+n l` | Folium: Link Selection to Note |
+| `alt+n b` | `cmd+alt+n b` | Folium: Branch Note |
+| `alt+n p` | `cmd+alt+n p` | Folium: Send Prompt |
+| `alt+n f` | `cmd+alt+n f` | Folium: Capture Follow-up from Clipboard |
+| `alt+n x` | `cmd+alt+n x` | Folium: Toggle Task at Cursor |
+| `alt+n enter` | `cmd+alt+n enter` | Folium: Send Line to Terminal |
 <!-- keybindings:end -->
 
 ---

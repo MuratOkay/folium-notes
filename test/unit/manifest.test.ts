@@ -12,6 +12,12 @@ describe('manifest', () => {
     expect(missing.map((command) => command.command)).toEqual([]);
   });
 
+  it('prefixes every command title with Folium:', () => {
+    expect(COMMANDS.length).toBeGreaterThan(0);
+    expect(COMMANDS.filter((command) => !command.title.startsWith('Folium: '))).toEqual([]);
+    expect(COMMANDS.filter((command) => command.category !== undefined)).toEqual([]);
+  });
+
   it('only references known commands from menus and keybindings', () => {
     const ids = new Set(COMMANDS.map((command) => command.command));
     const unknown = new Set<string>();

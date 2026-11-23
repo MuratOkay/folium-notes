@@ -75,406 +75,333 @@
     "commands": [
       {
         "command": "folium.newNote",
-        "title": "New Note",
-        "category": "Folium",
+        "title": "Folium: New Note",
         "icon": "$(add)"
       },
       {
         "command": "folium.newSharedNote",
-        "title": "New Shared Note",
-        "category": "Folium",
+        "title": "Folium: New Shared Note",
         "icon": "$(add)"
       },
       {
         "command": "folium.newPrivateNote",
-        "title": "New Private Note",
-        "category": "Folium"
+        "title": "Folium: New Private Note"
       },
       {
         "command": "folium.newNoteWithTitle",
-        "title": "New Note with Title",
-        "category": "Folium"
+        "title": "Folium: New Note with Title"
       },
       {
         "command": "folium.newFromTemplate",
-        "title": "New Note from Template",
-        "category": "Folium"
+        "title": "Folium: New Note from Template"
       },
       {
         "command": "folium.browseTemplates",
-        "title": "Browse Templates",
-        "category": "Folium"
+        "title": "Folium: Browse Templates"
       },
       {
         "command": "folium.createTemplate",
-        "title": "Create Template",
-        "category": "Folium",
+        "title": "Folium: Create Template",
         "icon": "$(new-file)"
       },
       {
         "command": "folium.saveAsTemplate",
-        "title": "Save Note as Template",
-        "category": "Folium"
+        "title": "Folium: Save Note as Template"
       },
       {
         "command": "folium.manageTemplates",
-        "title": "Manage Templates",
-        "category": "Folium",
+        "title": "Folium: Manage Templates",
         "icon": "$(settings-gear)"
       },
       {
         "command": "folium.previewTemplate",
-        "title": "Preview Template",
-        "category": "Folium"
+        "title": "Folium: Preview Template"
       },
       {
         "command": "folium.search",
-        "title": "Search Notes",
-        "category": "Folium",
+        "title": "Folium: Search Notes",
         "icon": "$(search)"
       },
       {
         "command": "folium.searchWithQuery",
-        "title": "Search Notes with Query",
-        "category": "Folium"
+        "title": "Folium: Search Notes with Query"
       },
       {
         "command": "folium.statusMenu",
-        "title": "Note Actions (status bar)",
-        "category": "Folium"
+        "title": "Folium: Note Actions (status bar)"
       },
       {
         "command": "folium.openNote",
-        "title": "Open Note",
-        "category": "Folium"
+        "title": "Folium: Open Note"
       },
       {
         "command": "folium.setColor",
-        "title": "Set Note Color",
-        "category": "Folium",
+        "title": "Folium: Set Note Color",
         "icon": "$(symbol-color)"
       },
       {
         "command": "folium.togglePin",
-        "title": "Toggle Pin",
-        "category": "Folium",
+        "title": "Folium: Toggle Pin",
         "icon": "$(pin)"
       },
       {
         "command": "folium.archive",
-        "title": "Archive Note",
-        "category": "Folium",
+        "title": "Folium: Archive Note",
         "icon": "$(archive)"
       },
       {
         "command": "folium.unarchive",
-        "title": "Unarchive Note",
-        "category": "Folium"
+        "title": "Folium: Unarchive Note"
       },
       {
         "command": "folium.renameNote",
-        "title": "Rename Note",
-        "category": "Folium",
+        "title": "Folium: Rename Note",
         "icon": "$(edit)"
       },
       {
         "command": "folium.duplicateNote",
-        "title": "Duplicate Note",
-        "category": "Folium"
+        "title": "Folium: Duplicate Note"
       },
       {
         "command": "folium.moveNote",
-        "title": "Move Note to Other Scope",
-        "category": "Folium"
+        "title": "Folium: Move Note to Other Scope"
       },
       {
         "command": "folium.editTags",
-        "title": "Edit Note Tags",
-        "category": "Folium",
+        "title": "Folium: Edit Note Tags",
         "icon": "$(tag)"
       },
       {
         "command": "folium.trashNote",
-        "title": "Move Note to Trash",
-        "category": "Folium",
+        "title": "Folium: Move Note to Trash",
         "icon": "$(trash)"
       },
       {
         "command": "folium.restoreTrash",
-        "title": "Restore Note from Trash",
-        "category": "Folium",
+        "title": "Folium: Restore Note from Trash",
         "icon": "$(discard)"
       },
       {
         "command": "folium.deleteTrashEntry",
-        "title": "Delete Note Permanently",
-        "category": "Folium"
+        "title": "Folium: Delete Note Permanently"
       },
       {
         "command": "folium.emptyTrash",
-        "title": "Empty Trash",
-        "category": "Folium",
+        "title": "Folium: Empty Trash",
         "icon": "$(clear-all)"
       },
       {
         "command": "folium.newFromSelection",
-        "title": "New Note from Selection",
-        "category": "Folium",
+        "title": "Folium: New Note from Selection",
         "icon": "$(add)"
       },
       {
         "command": "folium.linkSelection",
-        "title": "Link Selection to Note",
-        "category": "Folium",
+        "title": "Folium: Link Selection to Note",
         "icon": "$(link)"
       },
       {
         "command": "folium.updateCodeLinks",
-        "title": "Update Code Links",
-        "category": "Folium"
+        "title": "Folium: Update Code Links"
       },
       {
         "command": "folium.showNotesForFile",
-        "title": "Show Notes for File",
-        "category": "Folium"
+        "title": "Folium: Show Notes for File"
       },
       {
         "command": "folium.createMissingNote",
-        "title": "Create Missing Linked Note",
-        "category": "Folium"
+        "title": "Folium: Create Missing Linked Note"
       },
       {
         "command": "folium.toggleTask",
-        "title": "Toggle Task at Cursor",
-        "category": "Folium"
+        "title": "Folium: Toggle Task at Cursor"
       },
       {
         "command": "folium.openTask",
-        "title": "Open Task",
-        "category": "Folium"
+        "title": "Folium: Open Task"
       },
       {
         "command": "folium.showTasks",
-        "title": "Show Tasks",
-        "category": "Folium",
+        "title": "Folium: Show Tasks",
         "icon": "$(checklist)"
       },
       {
         "command": "folium.sendLineToTerminal",
-        "title": "Send Line to Terminal",
-        "category": "Folium",
+        "title": "Folium: Send Line to Terminal",
         "icon": "$(terminal)"
       },
       {
         "command": "folium.toggleDoneTasks",
-        "title": "Show/Hide Done Tasks",
-        "category": "Folium",
+        "title": "Folium: Show/Hide Done Tasks",
         "icon": "$(check-all)"
       },
       {
         "command": "folium.tasksGroupBy",
-        "title": "Group Tasks By…",
-        "category": "Folium",
+        "title": "Folium: Group Tasks By…",
         "icon": "$(list-unordered)"
       },
       {
         "command": "folium.toggleTagFilter",
-        "title": "Toggle Tag Filter",
-        "category": "Folium"
+        "title": "Folium: Toggle Tag Filter"
       },
       {
         "command": "folium.filterByTag",
-        "title": "Filter by Tag",
-        "category": "Folium",
+        "title": "Folium: Filter by Tag",
         "icon": "$(tag)"
       },
       {
         "command": "folium.filterByColor",
-        "title": "Filter by Color",
-        "category": "Folium",
+        "title": "Folium: Filter by Color",
         "icon": "$(symbol-color)"
       },
       {
         "command": "folium.filterByDate",
-        "title": "Filter by Date",
-        "category": "Folium",
+        "title": "Folium: Filter by Date",
         "icon": "$(calendar)"
       },
       {
         "command": "folium.filterByScope",
-        "title": "Filter by Scope",
-        "category": "Folium"
+        "title": "Folium: Filter by Scope"
       },
       {
         "command": "folium.filterByText",
-        "title": "Filter by Text",
-        "category": "Folium"
+        "title": "Folium: Filter by Text"
       },
       {
         "command": "folium.setTagFilterMode",
-        "title": "Tag Filter Mode (Any/All)",
-        "category": "Folium"
+        "title": "Folium: Tag Filter Mode (Any/All)"
       },
       {
         "command": "folium.clearFilters",
-        "title": "Clear Filters",
-        "category": "Folium",
+        "title": "Folium: Clear Filters",
         "icon": "$(clear-all)"
       },
       {
         "command": "folium.showFilters",
-        "title": "Show Active Filters",
-        "category": "Folium"
+        "title": "Folium: Show Active Filters"
       },
       {
         "command": "folium.groupBy",
-        "title": "Group Notes By…",
-        "category": "Folium",
+        "title": "Folium: Group Notes By…",
         "icon": "$(list-unordered)"
       },
       {
         "command": "folium.sortBy",
-        "title": "Sort Notes By…",
-        "category": "Folium",
+        "title": "Folium: Sort Notes By…",
         "icon": "$(sort-precedence)"
       },
       {
         "command": "folium.sortOrder",
-        "title": "Toggle Sort Order",
-        "category": "Folium",
+        "title": "Folium: Toggle Sort Order",
         "icon": "$(arrow-swap)"
       },
       {
         "command": "folium.renameTag",
-        "title": "Rename Tag Everywhere",
-        "category": "Folium"
+        "title": "Folium: Rename Tag Everywhere"
       },
       {
         "command": "folium.removeTag",
-        "title": "Remove Tag Everywhere",
-        "category": "Folium"
+        "title": "Folium: Remove Tag Everywhere"
       },
       {
         "command": "folium.sendPrompt",
-        "title": "Send Prompt",
-        "category": "Folium",
+        "title": "Folium: Send Prompt",
         "icon": "$(comment-discussion)"
       },
       {
         "command": "folium.saveAsCopilotPrompt",
-        "title": "Save as Copilot Prompt File",
-        "category": "Folium"
+        "title": "Folium: Save as Copilot Prompt File"
       },
       {
         "command": "folium.captureFollowUp",
-        "title": "Capture Follow-up from Clipboard",
-        "category": "Folium",
+        "title": "Folium: Capture Follow-up from Clipboard",
         "icon": "$(comment-add)"
       },
       {
         "command": "folium.sendAnswers",
-        "title": "Send Follow-up Answers",
-        "category": "Folium",
+        "title": "Folium: Send Follow-up Answers",
         "icon": "$(reply)"
       },
       {
         "command": "folium.connectAITools",
-        "title": "Connect AI Tools",
-        "category": "Folium",
+        "title": "Folium: Connect AI Tools",
         "icon": "$(plug)"
       },
       {
         "command": "folium.encryptNote",
-        "title": "Encrypt Note",
-        "category": "Folium",
+        "title": "Folium: Encrypt Note",
         "icon": "$(lock)"
       },
       {
         "command": "folium.decryptNote",
-        "title": "Decrypt Note",
-        "category": "Folium",
+        "title": "Folium: Decrypt Note",
         "icon": "$(unlock)"
       },
       {
         "command": "folium.backupKey",
-        "title": "Back Up Encryption Key",
-        "category": "Folium"
+        "title": "Folium: Back Up Encryption Key"
       },
       {
         "command": "folium.restoreKey",
-        "title": "Restore Encryption Key",
-        "category": "Folium"
+        "title": "Folium: Restore Encryption Key"
       },
       {
         "command": "folium.backupPrivate",
-        "title": "Back Up Private Notes",
-        "category": "Folium"
+        "title": "Folium: Back Up Private Notes"
       },
       {
         "command": "folium.restorePrivate",
-        "title": "Restore Private Notes",
-        "category": "Folium"
+        "title": "Folium: Restore Private Notes"
       },
       {
         "command": "folium.configurePrivateRoot",
-        "title": "Set Private Notes Folder",
-        "category": "Folium"
+        "title": "Folium: Set Private Notes Folder"
       },
       {
         "command": "folium.openPrivateFolder",
-        "title": "Open Private Notes Folder",
-        "category": "Folium"
+        "title": "Folium: Open Private Notes Folder"
       },
       {
         "command": "folium.resetViewState",
-        "title": "Reset View State",
-        "category": "Folium"
+        "title": "Folium: Reset View State"
       },
       {
         "command": "folium.importNotes",
-        "title": "Import Notes",
-        "category": "Folium",
+        "title": "Folium: Import Notes",
         "icon": "$(cloud-download)"
       },
       {
         "command": "folium.exportNotes",
-        "title": "Export Notes",
-        "category": "Folium",
+        "title": "Folium: Export Notes",
         "icon": "$(cloud-upload)"
       },
       {
         "command": "folium.sendToJoplin",
-        "title": "Send to Joplin",
-        "category": "Folium"
+        "title": "Folium: Send to Joplin"
       },
       {
         "command": "folium.createIssue",
-        "title": "Create Issue from Note",
-        "category": "Folium",
+        "title": "Folium: Create Issue from Note",
         "icon": "$(issues)"
       },
       {
         "command": "folium.branchNote",
-        "title": "Branch Note",
-        "category": "Folium",
+        "title": "Folium: Branch Note",
         "icon": "$(git-branch)"
       },
       {
         "command": "folium.gettingStarted",
-        "title": "Getting Started",
-        "category": "Folium",
+        "title": "Folium: Getting Started",
         "icon": "$(book)"
       },
       {
         "command": "folium.refresh",
-        "title": "Refresh Notes",
-        "category": "Folium",
+        "title": "Folium: Refresh Notes",
         "icon": "$(refresh)"
       },
       {
         "command": "folium.showLog",
-        "title": "Show Log",
-        "category": "Folium",
+        "title": "Folium: Show Log",
         "icon": "$(output)"
       }
     ],
@@ -1063,7 +990,7 @@
           "default": true,
           "scope": "window",
           "order": 25,
-          "description": "Show a ✓ after done tasks in the editor."
+          "description": "Show done tasks as [✓] in the editor."
         },
         "foliumNotes.tasks.statusBar": {
           "type": "boolean",

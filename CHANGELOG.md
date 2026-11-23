@@ -35,6 +35,10 @@ First pre-release of Folium Notes for VS Code.
 * Documentation: a full [USER_GUIDE.md](USER_GUIDE.md) (generated command/settings reference) and a
   step-by-step [marketplace publishing guide](docs/PUBLISHING.md) with trusted-publishing (OIDC) CI.
 * Tags view checkboxes toggle the tag filter.
+* Every contributed command title now starts with `Folium:` so the Command Palette/quick access lists them
+  together (the category field was dropped to avoid a duplicated prefix).
+* Done tasks render `[✓]` in the editor by replacing the `x` inside the brackets instead of adding a
+  trailing ✓; the file format still stores `[x]`.
 * New **Terminal Prompts** built-in template and **Send Line to Terminal** command (current note line or a
   selection, with Markdown markers and `$` prompts stripped), covered by unit tests and an extension-host
   integration test against a real terminal.

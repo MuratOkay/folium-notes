@@ -113,6 +113,13 @@ describe('tasks', () => {
     expect(tasks[1].due).toBe('2026-11-20');
   });
 
+  it('records the status character offset used for the editor check mark', () => {
+    const raw = '- [x] done\n- [X] upper\n';
+    const tasks = parseTasks(raw, source);
+    expect(raw[tasks[0].offset]).toBe('x');
+    expect(raw[tasks[1].offset]).toBe('X');
+  });
+
   it('toggles tasks at the recorded offset', () => {
     const raw = '- [ ] task\n- [x] done\n';
     const tasks = parseTasks(raw, source);
