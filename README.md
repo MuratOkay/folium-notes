@@ -15,15 +15,17 @@ my-project/.notes/.templates/     ← team templates
 
 ## What it does
 
-* **One view for shared and private notes.** Shared notes live in `<project>/.notes` (`sharedFolder`),
+* **One view for shared and private notes.** Shared and Private are always the two roots of the Notes
+  tree, so every note shows where it lives. Shared notes live in `<project>/.notes` (`sharedFolder`),
   private notes in `~/FoliumNotes/<project key>` (`privateRoot`). The key comes from the git remote
   (`origin`, else the first remote), normalised to `host/path`: `git@github.com:Org/Repo.git` →
   `github.com/org/repo`, SCP/ssh/https alike, Azure DevOps forms unified, monorepo sub folders appended.
   Without a remote the key is `local/<folder>-<sha1(path) 8 hex>` (Windows drive letter lower-cased).
-* **Grouping, sorting and filters.** By scope, nested tag, date (Today, Yesterday, This Week, This Month,
-  Month YYYY), color or none; sort by created/updated/title with pins first; filters for tags (any/all),
-  colors (including none), date presets and custom ranges, text and scope; a filter summary with clear;
-  Archive and Trash groups; drag & drop; multi-select; auto-reveal; tooltips and screen-reader labels.
+* **Grouping, sorting and filters.** Inside Shared and Private: flat, nested tag, date (Today, Yesterday,
+  This Week, This Month, Month YYYY) or color; sort by created/updated/title with pins first; filters for
+  tags (any/all), colors (including none), date presets and custom ranges, title, text and scope; a filter
+  summary with clear; Archive and Trash groups; drag & drop; multi-select; auto-reveal; tooltips and
+  screen-reader labels.
 * **Search.** Title boost 3, tags 2, body 1, prefix matching, typo tolerance (~20% edits for terms over
   three characters), `#tag` filters, snippets, recent notes, “create a note with this title”.
 * **Templates.** Eleven built-ins (Bug investigation, Meeting notes, Decision record, Manual test
@@ -32,7 +34,7 @@ my-project/.notes/.templates/     ← team templates
   Placeholders, questions, prompt context, diagnostics, completion, hover and live preview.
 * **Terminal prompts.** Keep install/build/test commands in a note and send the current line (or a
   selection) to the integrated terminal with **Send Line to Terminal**; Markdown markers and `$` prompts are
-  stripped first.
+  stripped first. The **Commands** view lists every fenced-block command of your notes, ready to run.
 * **Code links.** `{ path, lines, text, endText }` snippets resolve exact › moved › moved-first ›
   fuzzy (≥ 75%) › lost, with CodeLens, gutter dots, hover, new-note-from-selection, link selection and
   re-capture (`Update Code Links`).
@@ -41,6 +43,7 @@ my-project/.notes/.templates/     ← team templates
 * **Encryption** (AES-256-GCM, secret storage, portable key backup) and **safe AI**: tools cannot read
   notes; prompt and follow-up notes send content only when you ask, and never from private or sensitive
   notes. Copilot Chat, Cline, Roo, Kilo, clipboard targets, a `#followUp` tool and a stdio MCP server.
+  The **AI** view collects prompt and follow-up notes and the AI actions.
 * **Import/export**: Markdown/Obsidian, Joplin `.jex`, Evernote `.enex`; Obsidian or Joplin export; Joplin
   sync; GitHub/GitLab/Jira issues; tar backups of private notes.
 

@@ -1,5 +1,9 @@
 import { describe, expect, it } from 'vitest';
-import { terminalCommandFromLine, terminalCommandFromSelection } from '../../src/core/terminal';
+import {
+  extractTerminalCommands,
+  terminalCommandFromLine,
+  terminalCommandFromSelection,
+} from '../../src/core/terminal';
 
 describe('terminalCommandFromLine', () => {
   it('sends plain command lines unchanged', () => {
@@ -63,5 +67,28 @@ describe('terminalCommandFromSelection', () => {
     expect(terminalCommandFromSelection('npm ci\r\nnpm test\r\n')).toBe('npm ci\nnpm test');
     expect(terminalCommandFromSelection('```\n\n```')).toBeUndefined();
     expect(terminalCommandFromSelection('   ')).toBeUndefined();
+  });
+});
+
+describe('extractTerminalCommands', () => {
+  it('collects fenced code block commands with their line numbers', () => {
+    const body = ['# Commands', '', '```bash', 'npm ci', '$ npm test', '```', '', 'npm run prose'].join('\n');
+    expect(extractTerminalCommands(body)).toEqual([
+      { line: 4, text: 'npm ci' },
+      { line: 5, text: 'npm test' },
+    ]);
+  });
+
+  it('collects explicit $ lines outside fences, including list markers', () => {
+    const body = ['- $ git status', '- [ ] $ npm test', 'Plain prose', '- npm run lint'].join('\n');
+    expect(extractTerminalCommands(body)).toEqual([
+      { line: 1, text: 'git status' },
+      { line: 2, text: 'npm test' },
+    ]);
+  });
+
+  it('ignores prose, headings, blank lines and tilde fences', () => {
+    const body = ['## Run', '', '~~~bash', 'docker compose up', '~~~', '', 'Some explanation.'].join('\n');
+    expect(extractTerminalCommands(body)).toEqual([{ line: 4, text: 'docker compose up' }]);
   });
 });

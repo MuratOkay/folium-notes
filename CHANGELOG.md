@@ -1,5 +1,23 @@
 # Changelog
 
+## 1.0.2
+
+* Tasks view: a task row now shows only its checkbox (the extra circle/check icon before the label is gone).
+
+## 1.0.1
+
+* Notes view: Shared and Private are always the two roots (grouping happens inside each scope); the
+  header toolbar is New, Search, Filter, Sort by, Group by plus one "…" menu with filters, note
+  creation, workspace actions and import/export in that order.
+* Notes header actions stay visible (`workbench.view.alwaysShowHeaderActions` default) instead of
+  appearing on hover.
+* New AI and Commands views (prompt/follow-up notes and AI actions; runnable terminal commands found in
+  notes).
+* Note context menu: Open, Rename, Edit Tags, Set Color, Pin, Move to Private/Shared, Archive, Copy Link,
+  Copy Path, Reveal, Save as Template, Update Code Links, Create Issue, Link an Issue, Send to Joplin,
+  Delete.
+* Filter by Title; the New Note flow always asks Shared or Private (the setting only preselects one).
+
 ## 1.0.0
 
 First stable release of Folium Notes for VS Code, following the 0.1.0 pre-release.

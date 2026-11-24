@@ -5,7 +5,7 @@ import fs from 'node:fs/promises';
 import path from 'node:path';
 import type { FoliumApp } from '../app';
 import { activeNote, pickNote } from './util';
-import { codeContext } from './noteCommands';
+import { codeContext, createNoteFlow } from './noteCommands';
 import { renderTemplate, type TemplateContext } from '../core/templates';
 import {
   composeAnswersReply,
@@ -30,6 +30,11 @@ export const AI_TARGETS: Record<string, { label: string; kind: 'api' | 'clipboar
   jetbrains: { label: 'JetBrains AI', kind: 'clipboard' },
   custom: { label: 'Custom command', kind: 'api' },
 };
+
+/** Create a note from the built-in AI prompt template (asks for shared/private). */
+export async function newPromptNote(app: FoliumApp): Promise<void> {
+  await createNoteFlow(app, { templateName: 'AI prompt' });
+}
 
 async function sendToTarget(app: FoliumApp, text: string, targetKey: string): Promise<boolean> {
   const settings = app.settings.prompts;

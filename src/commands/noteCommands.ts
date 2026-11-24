@@ -19,7 +19,7 @@ import {
 } from '../core/codeLinks';
 import { renderTemplate, templatesForScope, type TemplateDefinition, type TemplateContext } from '../core/templates';
 import { normalizeTag } from '../core/tags';
-import { emptyFilters } from '../core/views';
+import { emptyFilters, hasActiveFilters } from '../core/views';
 import { showSearch } from '../ui/search';
 
 function lastCodeEditor(app: FoliumApp): vscode.TextEditor | undefined {
@@ -485,60 +485,102 @@ export async function emptyTrash(app: FoliumApp): Promise<void> {
   app.refresh();
 }
 
-export async function renameNote(app: FoliumApp): Promise<void> {
-  const note = activeNote(app) ?? (await pickNote(app));
-  if (!note || !app.store) return;
-  const title = await askTitle(note.title, 'New title');
-  if (!title || title === note.title) return;
-  await app.store.updateFrontMatter(note, [['title', title]]);
+export async function renameNote(app: FoliumApp, note?: NoteFile): Promise<void> {
+  const target = note ?? activeNote(app) ?? (await pickNote(app));
+  if (!target || !app.store) return;
+  const title = await askTitle(target.title, 'New title');
+  if (!title || title === target.title) return;
+  await app.store.updateFrontMatter(target, [['title', title]]);
   app.refresh();
 }
 
-export async function duplicateNote(app: FoliumApp): Promise<void> {
-  const note = activeNote(app) ?? (await pickNote(app));
-  if (!note || !app.store) return;
+export async function duplicateNote(app: FoliumApp, note?: NoteFile): Promise<void> {
+  const target = note ?? activeNote(app) ?? (await pickNote(app));
+  if (!target || !app.store) return;
   const created = await app.store.createNote({
-    scope: note.scope,
-    title: `${note.title} (copy)`,
-    body: note.body,
-    tags: note.tags,
-    kind: note.kind,
-    target: note.target,
-    sensitive: note.sensitive,
-    extra: { ...note.meta },
+    scope: target.scope,
+    title: `${target.title} (copy)`,
+    body: target.body,
+    tags: target.tags,
+    kind: target.kind,
+    target: target.target,
+    sensitive: target.sensitive,
+    extra: { ...target.meta },
   });
   await app.openNote(created);
   app.refresh();
 }
 
-export async function moveNoteScope(app: FoliumApp): Promise<void> {
-  const note = activeNote(app) ?? (await pickNote(app));
-  if (!note || !app.store) return;
-  const target: Scope = note.scope === 'shared' ? 'private' : 'shared';
-  if (target === 'shared' && note.sensitive) {
+export async function moveNoteScope(
+  app: FoliumApp,
+  note?: NoteFile,
+  requested?: Scope,
+): Promise<void> {
+  const target = note ?? activeNote(app) ?? (await pickNote(app));
+  if (!target || !app.store) return;
+  const scope: Scope = requested ?? (target.scope === 'shared' ? 'private' : 'shared');
+  if (scope === target.scope) return;
+  if (scope === 'shared' && target.sensitive) {
     void vscode.window.showWarningMessage('Sensitive notes can never be shared.');
     return;
   }
-  const ok = await confirmDanger(`Move "${note.title}" to ${target} notes?`, 'Move');
+  const ok = await confirmDanger(`Move "${target.title}" to ${scope} notes?`, 'Move');
   if (!ok) return;
-  const moved = await app.store.moveNote(note, target);
+  const moved = await app.store.moveNote(target, scope);
   await app.openNote(moved);
   app.refresh();
 }
 
-export async function editNoteTags(app: FoliumApp): Promise<void> {
-  const note = activeNote(app) ?? (await pickNote(app));
-  if (!note || !app.store) return;
+export async function editNoteTags(app: FoliumApp, note?: NoteFile): Promise<void> {
+  const target = note ?? activeNote(app) ?? (await pickNote(app));
+  if (!target || !app.store) return;
   const value = await vscode.window.showInputBox({
     prompt: 'Tags (comma separated, nested with /)',
-    value: app.store.tagsOf(note).join(', '),
+    value: app.store.tagsOf(target).join(', '),
   });
   if (value === undefined) return;
   const tags = value
     .split(',')
     .map((tag) => normalizeTag(tag))
     .filter(Boolean);
-  await app.store.updateFrontMatter(note, [['tags', tags.length > 0 ? tags : undefined]]);
+  await app.store.updateFrontMatter(target, [['tags', tags.length > 0 ? tags : undefined]]);
+  app.refresh();
+}
+
+/** Copy a `[[wiki link]]` to the note so it can be pasted into another note. */
+export async function copyNoteLink(app: FoliumApp, note?: NoteFile): Promise<void> {
+  const target = note ?? activeNote(app) ?? (await pickNote(app, { placeHolder: 'Copy the link of which note?' }));
+  if (!target) return;
+  const link = `[[${target.title}]]`;
+  await vscode.env.clipboard.writeText(link);
+  void vscode.window.setStatusBarMessage(`Folium: copied ${link}`, 2500);
+}
+
+export async function copyNotePath(app: FoliumApp, note?: NoteFile): Promise<void> {
+  const target = note ?? activeNote(app) ?? (await pickNote(app, { placeHolder: 'Copy the path of which note?' }));
+  if (!target) return;
+  await vscode.env.clipboard.writeText(target.absPath);
+  void vscode.window.setStatusBarMessage(`Folium: copied ${target.absPath}`, 2500);
+}
+
+export async function revealNote(app: FoliumApp, note?: NoteFile): Promise<void> {
+  const target = note ?? activeNote(app) ?? (await pickNote(app, { placeHolder: 'Reveal which note?' }));
+  if (!target) return;
+  await vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(target.absPath));
+}
+
+/** Paste an issue URL (or key) into the note front matter. */
+export async function linkIssue(app: FoliumApp, note?: NoteFile): Promise<void> {
+  const target = note ?? activeNote(app) ?? (await pickNote(app, { placeHolder: 'Link an issue to which note?' }));
+  if (!target || !app.store) return;
+  const value = await vscode.window.showInputBox({
+    title: 'Link an issue',
+    prompt: 'Issue URL (GitHub/GitLab) or Jira key',
+    value: target.issue,
+    validateInput: (input) => (input.trim() ? undefined : 'An issue URL or key is required'),
+  });
+  if (!value?.trim()) return;
+  await app.store.updateFrontMatter(target, [['issue', value.trim()]]);
   app.refresh();
 }
 
@@ -682,6 +724,38 @@ export async function filterByText(app: FoliumApp): Promise<void> {
   app.refresh();
 }
 
+export async function filterByTitle(app: FoliumApp): Promise<void> {
+  const state = app.viewStateStore.get();
+  const value = await vscode.window.showInputBox({
+    title: 'Filter by Title',
+    prompt: 'Only show notes whose title contains this text (leave empty to clear)',
+    value: state.filters.title,
+  });
+  if (value === undefined) return;
+  await app.viewStateStore.updateFilters({ ...state.filters, title: value });
+  app.refresh();
+}
+
+/** The toolbar "Filter" button: pick which filter to change. */
+export async function filterMenu(app: FoliumApp): Promise<void> {
+  const state = app.viewStateStore.get();
+  const options = [
+    { label: '$(tag) Filter by Tags', command: 'folium.filterByTag' },
+    { label: '$(symbol-color) Filter by Color', command: 'folium.filterByColor' },
+    { label: '$(calendar) Filter by Date', command: 'folium.filterByDate' },
+    { label: '$(case-sensitive) Filter by Title', command: 'folium.filterByTitle' },
+    { label: '$(folder-library) Filter by Shared/Private', command: 'folium.filterByScope' },
+    ...(hasActiveFilters(state.filters)
+      ? [{ label: '$(clear-all) Clear Filters', command: 'folium.clearFilters' }]
+      : []),
+  ];
+  const picked = await vscode.window.showQuickPick(options, {
+    placeHolder: 'Filter notes',
+    title: 'Filter',
+  });
+  if (picked) await vscode.commands.executeCommand(picked.command);
+}
+
 export async function setTagFilterMode(app: FoliumApp): Promise<void> {
   const state = app.viewStateStore.get();
   const picked = await vscode.window.showQuickPick(
@@ -704,13 +778,12 @@ export async function clearFilters(app: FoliumApp): Promise<void> {
 export async function setGroupBy(app: FoliumApp): Promise<void> {
   const picked = await vscode.window.showQuickPick(
     [
-      { label: 'None', value: 'none' as const },
-      { label: 'Scope (shared/private)', value: 'scope' as const },
+      { label: 'Flat list (inside Shared/Private)', value: 'none' as const },
       { label: 'Tag (nested)', value: 'tag' as const },
       { label: 'Date', value: 'date' as const },
       { label: 'Color', value: 'color' as const },
     ],
-    { placeHolder: 'Group notes by' },
+    { placeHolder: 'Group notes inside Shared and Private by' },
   );
   if (!picked) return;
   await app.viewStateStore.update({ groupBy: picked.value });

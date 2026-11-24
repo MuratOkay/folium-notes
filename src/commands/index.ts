@@ -21,6 +21,11 @@ function keyOf(arg: unknown): string | undefined {
 }
 
 export function registerCommands(app: FoliumApp): void {
+  /** Tree items (keys), command arguments (keys) and strings all resolve to a note. */
+  const noteOf = (arg: unknown): NoteFile | undefined => {
+    const key = keyOf(arg);
+    return key ? app.store?.byKey(key) : undefined;
+  };
   const register = (id: string, handler: (...args: never[]) => unknown): void => {
     app.context.subscriptions.push(
       vscode.commands.registerCommand(id, async (...args: unknown[]) => {
@@ -69,10 +74,16 @@ export function registerCommands(app: FoliumApp): void {
     const key = keyOf(arg);
     await notes.trashNote(app, key ? app.store?.byKey(key) : undefined);
   });
-  register('folium.renameNote', async () => notes.renameNote(app));
-  register('folium.duplicateNote', async () => notes.duplicateNote(app));
-  register('folium.moveNote', async () => notes.moveNoteScope(app));
-  register('folium.editTags', async () => notes.editNoteTags(app));
+  register('folium.renameNote', async (arg: unknown) => notes.renameNote(app, noteOf(arg)));
+  register('folium.duplicateNote', async (arg: unknown) => notes.duplicateNote(app, noteOf(arg)));
+  register('folium.moveNote', async (arg: unknown) => notes.moveNoteScope(app, noteOf(arg)));
+  register('folium.moveToPrivate', async (arg: unknown) => notes.moveNoteScope(app, noteOf(arg), 'private'));
+  register('folium.moveToShared', async (arg: unknown) => notes.moveNoteScope(app, noteOf(arg), 'shared'));
+  register('folium.editTags', async (arg: unknown) => notes.editNoteTags(app, noteOf(arg)));
+  register('folium.copyNoteLink', async (arg: unknown) => notes.copyNoteLink(app, noteOf(arg)));
+  register('folium.copyNotePath', async (arg: unknown) => notes.copyNotePath(app, noteOf(arg)));
+  register('folium.revealNote', async (arg: unknown) => notes.revealNote(app, noteOf(arg)));
+  register('folium.linkIssue', async (arg: unknown) => notes.linkIssue(app, noteOf(arg)));
   register('folium.restoreTrash', async (arg: unknown) => {
     const entry = arg && typeof arg === 'object' && 'entry' in arg ? (arg as { entry: { storedName: string } }).entry : undefined;
     await notes.restoreTrashEntry(app, entry);
@@ -111,6 +122,8 @@ export function registerCommands(app: FoliumApp): void {
     if (tag) await notes.toggleTagFilter(app, tag);
   });
   register('folium.filterByTag', async () => tags.filterByTagCommand(app));
+  register('folium.filterMenu', async () => notes.filterMenu(app));
+  register('folium.filterByTitle', async () => notes.filterByTitle(app));
   register('folium.filterByColor', async () => notes.filterByColor(app));
   register('folium.filterByDate', async () => notes.filterByDate(app));
   register('folium.filterByScope', async () => notes.filterByScope(app));
@@ -130,7 +143,7 @@ export function registerCommands(app: FoliumApp): void {
   register('folium.newFromTemplate', async () => templates.newFromTemplate(app));
   register('folium.browseTemplates', async () => templates.browseTemplatesForScope(app));
   register('folium.createTemplate', async () => templates.createTemplate(app));
-  register('folium.saveAsTemplate', async () => templates.saveNoteAsTemplate(app));
+  register('folium.saveAsTemplate', async (arg: unknown) => templates.saveNoteAsTemplate(app, noteOf(arg)));
   register('folium.manageTemplates', async () => templates.manageTemplates(app));
   register('folium.previewTemplate', async () => templates.previewTemplate(app));
 
@@ -143,6 +156,7 @@ export function registerCommands(app: FoliumApp): void {
   register('folium.captureFollowUp', async () => ai.captureFollowUp(app));
   register('folium.sendAnswers', async () => ai.sendAnswers(app));
   register('folium.connectAITools', async () => ai.connectAITools(app));
+  register('folium.newPromptNote', async () => ai.newPromptNote(app));
 
   // Security and backups
   register('folium.encryptNote', async () => security.encryptActiveNote(app));
@@ -153,13 +167,21 @@ export function registerCommands(app: FoliumApp): void {
   register('folium.restorePrivate', async () => security.restorePrivateNotes(app));
   register('folium.configurePrivateRoot', async () => security.configurePrivateRoot(app));
   register('folium.openPrivateFolder', async () => security.openPrivateFolder(app));
+  register('folium.openTemplatesFolder', async () => security.openTemplatesFolder(app));
+  register('folium.openSettings', async () => security.openSettings());
   register('folium.resetViewState', async () => security.resetViewState(app));
 
   // Import, export, Joplin and issues
   register('folium.importNotes', async () => importExport.importNotes(app));
   register('folium.exportNotes', async () => importExport.exportNotesCommand(app));
-  register('folium.sendToJoplin', async () => importExport.sendToJoplin(app));
-  register('folium.createIssue', async () => importExport.createIssue(app));
+  register('folium.sendToJoplin', async (arg: unknown) => importExport.sendToJoplin(app, noteOf(arg)));
+  register('folium.createIssue', async (arg: unknown) => importExport.createIssue(app, noteOf(arg)));
+  register('folium.runCommand', async (command: unknown) =>
+    terminal.runCommand(app, typeof command === 'string' ? command : undefined),
+  );
+  register('folium.copyTerminalCommand', async (command: unknown) =>
+    terminal.copyTerminalCommand(typeof command === 'string' ? command : undefined),
+  );
 
   // Branch and help
   register('folium.branchNote', async (arg: unknown) => {

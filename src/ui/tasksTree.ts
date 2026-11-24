@@ -91,7 +91,6 @@ export class TasksTreeProvider implements vscode.TreeDataProvider<TasksNode> {
       : vscode.TreeItemCheckboxState.Unchecked;
     item.contextValue = 'folium.task';
     item.tooltip = `${task.noteTitle} (line ${task.line})${task.due ? `\nDue: ${task.due}` : ''}`;
-    item.iconPath = new vscode.ThemeIcon(task.done ? 'pass-filled' : 'circle-large-outline');
     item.command = { command: 'folium.openTask', title: 'Open Task', arguments: [task] };
     item.accessibilityInformation = {
       label: `${task.done ? 'Done' : 'Open'} task: ${task.text}${task.due ? `, due ${task.due}` : ''}, in ${task.noteTitle}`,

@@ -173,6 +173,33 @@ export async function openPrivateFolder(app: FoliumApp): Promise<void> {
   await vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(folder));
 }
 
+export async function openTemplatesFolder(app: FoliumApp): Promise<void> {
+  const store = app.store;
+  if (!store) return;
+  const picked = await vscode.window.showQuickPick(
+    [
+      {
+        label: '$(folder) Personal templates',
+        description: store.paths.personalTemplatesDir,
+        value: store.paths.personalTemplatesDir,
+      },
+      {
+        label: '$(folder-library) Team templates',
+        description: store.paths.teamTemplatesDir,
+        value: store.paths.teamTemplatesDir,
+      },
+    ],
+    { title: 'Open Templates Folder', placeHolder: 'Which templates folder?' },
+  );
+  const folder = picked?.value ?? store.paths.personalTemplatesDir;
+  await fs.mkdir(folder, { recursive: true }).catch(() => undefined);
+  await vscode.commands.executeCommand('revealFileInOS', vscode.Uri.file(folder));
+}
+
+export async function openSettings(): Promise<void> {
+  await vscode.commands.executeCommand('workbench.action.openSettings', 'foliumNotes');
+}
+
 export async function resetViewState(app: FoliumApp): Promise<void> {
   await app.viewStateStore.update(defaultViewState({}));
   app.refresh();

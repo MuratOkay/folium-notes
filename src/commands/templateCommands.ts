@@ -15,6 +15,7 @@ import {
 } from '../core/templates';
 import { parseNote } from '../core/frontmatter';
 import { slugify } from '../core/filenames';
+import type { NoteFile } from '../store/store';
 
 async function pickTemplate(
   app: FoliumApp,
@@ -73,14 +74,14 @@ export async function createTemplate(app: FoliumApp): Promise<void> {
   app.refresh();
 }
 
-export async function saveNoteAsTemplate(app: FoliumApp): Promise<void> {
+export async function saveNoteAsTemplate(app: FoliumApp, given?: NoteFile): Promise<void> {
   const store = app.store;
   const editor = vscode.window.activeTextEditor;
-  if (!store || !editor) {
-    void vscode.window.showWarningMessage('Folium Notes: open a note first.');
+  if (!store) {
+    void vscode.window.showWarningMessage('Folium Notes: open a folder first.');
     return;
   }
-  const note = store.byPath(editor.document.uri.fsPath);
+  const note = given ?? (editor ? store.byPath(editor.document.uri.fsPath) : undefined);
   if (!note) {
     void vscode.window.showWarningMessage('Folium Notes: open a note first.');
     return;

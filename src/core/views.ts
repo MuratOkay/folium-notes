@@ -16,12 +16,15 @@ export interface FilterState {
   /** `YYYY-MM-DD` for the custom range. */
   dateFrom?: string;
   dateTo?: string;
+  /** Free-text search across title and body (see the search index). */
   text: string;
+  /** Case-insensitive substring filter on the note title. */
+  title: string;
   scope: 'all' | Scope;
 }
 
 export function emptyFilters(): FilterState {
-  return { tags: [], tagMode: 'any', colors: [], datePreset: 'any', text: '', scope: 'all' };
+  return { tags: [], tagMode: 'any', colors: [], datePreset: 'any', text: '', title: '', scope: 'all' };
 }
 
 export function hasActiveFilters(filters: FilterState): boolean {
@@ -30,6 +33,7 @@ export function hasActiveFilters(filters: FilterState): boolean {
     filters.colors.length > 0 ||
     filters.datePreset !== 'any' ||
     filters.text.trim() !== '' ||
+    (filters.title ?? '').trim() !== '' ||
     filters.scope !== 'all'
   );
 }
@@ -55,6 +59,7 @@ export function filterSummary(filters: FilterState): string {
     );
   }
   if (filters.text.trim()) parts.push(`text: “${filters.text.trim()}”`);
+  if ((filters.title ?? '').trim()) parts.push(`title: “${filters.title.trim()}”`);
   if (filters.scope !== 'all') parts.push(`scope: ${filters.scope}`);
   return parts.filter(Boolean).join(' · ');
 }
@@ -91,6 +96,8 @@ export function matchesFilters(
   now: Date = new Date(),
 ): boolean {
   if (filters.scope !== 'all' && note.scope !== filters.scope) return false;
+  const title = (filters.title ?? '').trim();
+  if (title && !note.title.toLowerCase().includes(title.toLowerCase())) return false;
   if (filters.tags.length > 0) {
     const matches = filters.tags.map((tag) =>
       note.tags.some((candidate) => tagMatches(candidate, tag)),
@@ -260,6 +267,7 @@ export function filterChips(filters: FilterState): Array<{ id: string; label: st
     });
   }
   if (filters.text.trim()) chips.push({ id: 'text', label: filters.text.trim() });
+  if ((filters.title ?? '').trim()) chips.push({ id: 'title', label: filters.title.trim() });
   if (filters.scope !== 'all') chips.push({ id: 'scope', label: filters.scope });
   return chips;
 }

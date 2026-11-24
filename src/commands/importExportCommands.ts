@@ -7,6 +7,7 @@ import { execFile } from 'node:child_process';
 import { promisify } from 'node:util';
 import type { FoliumApp } from '../app';
 import { activeNote, confirmDanger, pickNote, pickScope, requireTrusted } from './util';
+import type { NoteFile } from '../store/store';
 import { previewImport, type ImportFile, type ImportKind } from '../core/importers';
 import { exportNotes, exportTargetWarning } from '../core/exporters';
 import { JoplinApi } from '../core/joplin';
@@ -153,7 +154,7 @@ export async function exportNotesCommand(app: FoliumApp): Promise<void> {
   );
 }
 
-export async function sendToJoplin(app: FoliumApp): Promise<void> {
+export async function sendToJoplin(app: FoliumApp, given?: NoteFile): Promise<void> {
   const store = app.store;
   if (!store) return;
   const settings = app.settings.joplin;
@@ -167,13 +168,17 @@ export async function sendToJoplin(app: FoliumApp): Promise<void> {
     return;
   }
   const notebook = settings.notebook || store.paths.folderName;
-  const notes = store.allNotes.filter((note) => !note.sensitive && !note.encrypted);
+  const notes = (given ? [given] : store.allNotes).filter((note) => !note.sensitive && !note.encrypted);
   if (notes.length === 0) {
-    void vscode.window.showInformationMessage('Folium: there are no non-sensitive notes to send.');
+    void vscode.window.showInformationMessage(
+      given ? 'Folium: this note is sensitive or encrypted and is never sent.' : 'Folium: there are no non-sensitive notes to send.',
+    );
     return;
   }
   const ok = await confirmDanger(
-    `Send ${notes.length} note(s) to Joplin notebook "${notebook}"? Sensitive notes are never sent.`,
+    given
+      ? `Send "${given.title}" to Joplin notebook "${notebook}"?`
+      : `Send ${notes.length} note(s) to Joplin notebook "${notebook}"? Sensitive notes are never sent.`,
     'Send to Joplin',
   );
   if (!ok) return;
@@ -245,11 +250,11 @@ function repoRelative(app: FoliumApp, absPath: string): string | undefined {
   return rel.startsWith('..') ? undefined : rel;
 }
 
-export async function createIssue(app: FoliumApp): Promise<void> {
+export async function createIssue(app: FoliumApp, given?: NoteFile): Promise<void> {
   const store = app.store;
   if (!store) return;
   if (!requireTrusted('creating issues from notes')) return;
-  const note = activeNote(app) ?? (await pickNote(app, { placeHolder: 'Create an issue from which note?' }));
+  const note = given ?? activeNote(app) ?? (await pickNote(app, { placeHolder: 'Create an issue from which note?' }));
   if (!note) return;
   if (!canPublishIssue(note)) {
     void vscode.window.showWarningMessage('Folium: sensitive, encrypted and archived notes cannot be published as issues.');

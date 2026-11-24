@@ -56,3 +56,40 @@ export function terminalCommandFromSelection(selection: string): string | undefi
   const text = commands.join('\n').trim();
   return text.length > 0 ? text : undefined;
 }
+
+export interface ExtractedCommand {
+  /** One-based line number inside the note body. */
+  line: number;
+  text: string;
+}
+
+const PROMPT_MARKER = /^\s*(?:[-*+]|\d+[.)])?\s*(?:\[[ xX]\]\s*)?\$\s+\S/;
+
+/**
+ * Commands of a note for the Commands view: every line inside a fenced code block plus explicit
+ * `$ command` lines (list markers and task checkboxes allowed) outside fences. Prose is ignored.
+ */
+export function extractTerminalCommands(body: string): ExtractedCommand[] {
+  const out: ExtractedCommand[] = [];
+  let fence: string | undefined;
+  const lines = body.replace(/\r\n?/g, '\n').split('\n');
+  for (let index = 0; index < lines.length; index++) {
+    const raw = lines[index];
+    const trimmed = raw.trim();
+    const fenceMatch = /^(```|~~~)/.exec(trimmed);
+    if (fenceMatch) {
+      if (fence === fenceMatch[1]) fence = undefined;
+      else if (!fence) fence = fenceMatch[1];
+      continue;
+    }
+    if (fence) {
+      const parsed = terminalCommandFromLine(raw);
+      if (parsed.text) out.push({ line: index + 1, text: parsed.text });
+      continue;
+    }
+    if (!PROMPT_MARKER.test(raw)) continue;
+    const parsed = terminalCommandFromLine(raw);
+    if (parsed.text) out.push({ line: index + 1, text: parsed.text });
+  }
+  return out;
+}

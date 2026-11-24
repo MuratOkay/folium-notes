@@ -36,8 +36,11 @@ export interface ConfigProperty {
 
 export const CATEGORY = 'Folium';
 
-/** Prefix every command so the Command Palette lists all Folium commands together. */
-const commandTitle = (title: string): string => `${CATEGORY}: ${title}`;
+/**
+ * Menus show the command title, the Command Palette shows "Folium: <title>" because every command is
+ * contributed with `category: CATEGORY` (see MANIFEST below and scripts/gen-contributions.mjs).
+ */
+const commandTitle = (title: string): string => title;
 
 export const COMMANDS: CommandDef[] = [
   { command: 'folium.newNote', title: commandTitle('New Note'), icon: '$(add)' },
@@ -51,6 +54,7 @@ export const COMMANDS: CommandDef[] = [
   { command: 'folium.manageTemplates', title: commandTitle('Manage Templates'), icon: '$(settings-gear)' },
   { command: 'folium.previewTemplate', title: commandTitle('Preview Template') },
   { command: 'folium.search', title: commandTitle('Search Notes'), icon: '$(search)' },
+  { command: 'folium.filterMenu', title: commandTitle('Filter'), icon: '$(filter)' },
   { command: 'folium.searchWithQuery', title: commandTitle('Search Notes with Query') },
   { command: 'folium.statusMenu', title: commandTitle('Note Actions (status bar)') },
   { command: 'folium.openNote', title: commandTitle('Open Note') },
@@ -62,7 +66,13 @@ export const COMMANDS: CommandDef[] = [
   { command: 'folium.duplicateNote', title: commandTitle('Duplicate Note') },
   { command: 'folium.moveNote', title: commandTitle('Move Note to Other Scope') },
   { command: 'folium.editTags', title: commandTitle('Edit Note Tags'), icon: '$(tag)' },
-  { command: 'folium.trashNote', title: commandTitle('Move Note to Trash'), icon: '$(trash)' },
+  { command: 'folium.trashNote', title: commandTitle('Delete Note'), icon: '$(trash)' },
+  { command: 'folium.copyNoteLink', title: commandTitle('Copy Link to Note') },
+  { command: 'folium.copyNotePath', title: commandTitle('Copy Path') },
+  { command: 'folium.revealNote', title: commandTitle('Reveal in File Manager') },
+  { command: 'folium.moveToPrivate', title: commandTitle('Move to Private') },
+  { command: 'folium.moveToShared', title: commandTitle('Move to Shared') },
+  { command: 'folium.linkIssue', title: commandTitle('Link an Issue') },
   { command: 'folium.restoreTrash', title: commandTitle('Restore Note from Trash'), icon: '$(discard)' },
   { command: 'folium.deleteTrashEntry', title: commandTitle('Delete Note Permanently') },
   { command: 'folium.emptyTrash', title: commandTitle('Empty Trash'), icon: '$(clear-all)' },
@@ -78,10 +88,11 @@ export const COMMANDS: CommandDef[] = [
   { command: 'folium.toggleDoneTasks', title: commandTitle('Show/Hide Done Tasks'), icon: '$(check-all)' },
   { command: 'folium.tasksGroupBy', title: commandTitle('Group Tasks By…'), icon: '$(list-unordered)' },
   { command: 'folium.toggleTagFilter', title: commandTitle('Toggle Tag Filter') },
-  { command: 'folium.filterByTag', title: commandTitle('Filter by Tag'), icon: '$(tag)' },
+  { command: 'folium.filterByTag', title: commandTitle('Filter by Tags'), icon: '$(tag)' },
   { command: 'folium.filterByColor', title: commandTitle('Filter by Color'), icon: '$(symbol-color)' },
   { command: 'folium.filterByDate', title: commandTitle('Filter by Date'), icon: '$(calendar)' },
-  { command: 'folium.filterByScope', title: commandTitle('Filter by Scope') },
+  { command: 'folium.filterByTitle', title: commandTitle('Filter by Title') },
+  { command: 'folium.filterByScope', title: commandTitle('Filter by Shared/Private') },
   { command: 'folium.filterByText', title: commandTitle('Filter by Text') },
   { command: 'folium.setTagFilterMode', title: commandTitle('Tag Filter Mode (Any/All)') },
   { command: 'folium.clearFilters', title: commandTitle('Clear Filters'), icon: '$(clear-all)' },
@@ -100,17 +111,22 @@ export const COMMANDS: CommandDef[] = [
   { command: 'folium.decryptNote', title: commandTitle('Decrypt Note'), icon: '$(unlock)' },
   { command: 'folium.backupKey', title: commandTitle('Back Up Encryption Key') },
   { command: 'folium.restoreKey', title: commandTitle('Restore Encryption Key') },
-  { command: 'folium.backupPrivate', title: commandTitle('Back Up Private Notes') },
-  { command: 'folium.restorePrivate', title: commandTitle('Restore Private Notes') },
+  { command: 'folium.backupPrivate', title: commandTitle('Backup Private Notes') },
+  { command: 'folium.restorePrivate', title: commandTitle('Restore Private Notes from Backup') },
   { command: 'folium.configurePrivateRoot', title: commandTitle('Set Private Notes Folder') },
   { command: 'folium.openPrivateFolder', title: commandTitle('Open Private Notes Folder') },
+  { command: 'folium.openTemplatesFolder', title: commandTitle('Open Templates Folder'), icon: '$(folder-opened)' },
+  { command: 'folium.openSettings', title: commandTitle('Settings'), icon: '$(settings-gear)' },
   { command: 'folium.resetViewState', title: commandTitle('Reset View State') },
   { command: 'folium.importNotes', title: commandTitle('Import Notes'), icon: '$(cloud-download)' },
   { command: 'folium.exportNotes', title: commandTitle('Export Notes'), icon: '$(cloud-upload)' },
   { command: 'folium.sendToJoplin', title: commandTitle('Send to Joplin') },
   { command: 'folium.createIssue', title: commandTitle('Create Issue from Note'), icon: '$(issues)' },
-  { command: 'folium.branchNote', title: commandTitle('Branch Note'), icon: '$(git-branch)' },
-  { command: 'folium.gettingStarted', title: commandTitle('Getting Started'), icon: '$(book)' },
+  { command: 'folium.branchNote', title: commandTitle('Open Branch Note'), icon: '$(git-branch)' },
+  { command: 'folium.newPromptNote', title: commandTitle('New Prompt Note'), icon: '$(comment-discussion)' },
+  { command: 'folium.runCommand', title: commandTitle('Run Command in Terminal'), icon: '$(play)' },
+  { command: 'folium.copyTerminalCommand', title: commandTitle('Copy Command') },
+  { command: 'folium.gettingStarted', title: commandTitle('Get Started'), icon: '$(book)' },
   { command: 'folium.refresh', title: commandTitle('Refresh Notes'), icon: '$(refresh)' },
   { command: 'folium.showLog', title: commandTitle('Show Log'), icon: '$(output)' },
 ];
@@ -136,6 +152,13 @@ export const VIEWS = [
     when: 'workspaceFolderCount > 0',
     icon: 'images/view-related.svg',
   },
+  { id: 'folium.ai', name: 'AI', when: 'workspaceFolderCount > 0', icon: 'images/view-ai.svg' },
+  {
+    id: 'folium.commands',
+    name: 'Commands',
+    when: 'workspaceFolderCount > 0',
+    icon: 'images/view-commands.svg',
+  },
 ];
 
 export const VIEWS_WELCOME = [
@@ -144,48 +167,97 @@ export const VIEWS_WELCOME = [
     contents:
       'No notes yet.\n[New Shared Note](command:folium.newSharedNote) · [New Private Note](command:folium.newPrivateNote) · [New from Template](command:folium.newFromTemplate)\nShared notes live in `.notes/` and are committed with the code. Private notes live in your home folder.',
   },
+  {
+    view: 'folium.ai',
+    contents:
+      'No prompts yet.\n[New Prompt Note](command:folium.newPromptNote) · [Connect AI Tools](command:folium.connectAITools)\nPrompt notes send their content only when you ask; private and sensitive notes are never sent.',
+  },
+  {
+    view: 'folium.commands',
+    contents:
+      'No terminal commands yet.\nTerminal commands are lines inside fenced code blocks (or `$ lines`) of your notes. [New from Template](command:folium.newFromTemplate)',
+  },
 ];
 
 export const MENUS: Record<string, MenuItem[]> = {
   'view/title': [
+    // Notes toolbar: New, Search, Filter, Sort by, Group by. Everything else lives in the "…" menu.
     { command: 'folium.newNote', when: 'view == folium.notes', group: 'navigation@1' },
-    { command: 'folium.newFromTemplate', when: 'view == folium.notes', group: 'navigation@2' },
-    { command: 'folium.search', when: 'view == folium.notes', group: 'navigation@3' },
-    { command: 'folium.groupBy', when: 'view == folium.notes', group: 'navigation@4' },
-    { command: 'folium.sortBy', when: 'view == folium.notes', group: 'navigation@5' },
-    { command: 'folium.filterByTag', when: 'view == folium.notes', group: 'navigation@6' },
-    { command: 'folium.clearFilters', when: 'view == folium.notes', group: 'navigation@7' },
-    { command: 'folium.refresh', when: 'view == folium.notes', group: 'navigation@8' },
-    { command: 'folium.filterByColor', when: 'view == folium.notes', group: '1_filters@1' },
-    { command: 'folium.filterByDate', when: 'view == folium.notes', group: '1_filters@2' },
-    { command: 'folium.filterByScope', when: 'view == folium.notes', group: '1_filters@3' },
-    { command: 'folium.filterByText', when: 'view == folium.notes', group: '1_filters@4' },
-    { command: 'folium.setTagFilterMode', when: 'view == folium.notes', group: '1_filters@5' },
-    { command: 'folium.emptyTrash', when: 'view == folium.notes', group: '2_trash@1' },
-    { command: 'folium.importNotes', when: 'view == folium.notes', group: '3_io@1' },
-    { command: 'folium.exportNotes', when: 'view == folium.notes', group: '3_io@2' },
+    { command: 'folium.search', when: 'view == folium.notes', group: 'navigation@2' },
+    { command: 'folium.filterMenu', when: 'view == folium.notes', group: 'navigation@3' },
+    { command: 'folium.sortBy', when: 'view == folium.notes', group: 'navigation@4' },
+    { command: 'folium.groupBy', when: 'view == folium.notes', group: 'navigation@5' },
+    // "…" menu: filters · new notes · workspace · import/export (separated by group).
+    { command: 'folium.filterByTag', when: 'view == folium.notes', group: '1_filter@1' },
+    { command: 'folium.filterByColor', when: 'view == folium.notes', group: '1_filter@2' },
+    { command: 'folium.filterByDate', when: 'view == folium.notes', group: '1_filter@3' },
+    { command: 'folium.filterByTitle', when: 'view == folium.notes', group: '1_filter@4' },
+    { command: 'folium.filterByScope', when: 'view == folium.notes', group: '1_filter@5' },
+    { command: 'folium.newSharedNote', when: 'view == folium.notes', group: '2_new@1' },
+    { command: 'folium.newPrivateNote', when: 'view == folium.notes', group: '2_new@2' },
+    { command: 'folium.newFromTemplate', when: 'view == folium.notes', group: '2_new@3' },
+    { command: 'folium.createTemplate', when: 'view == folium.notes', group: '2_new@4' },
+    { command: 'folium.manageTemplates', when: 'view == folium.notes', group: '2_new@5' },
+    { command: 'folium.branchNote', when: 'view == folium.notes', group: '2_new@6' },
+    { command: 'folium.gettingStarted', when: 'view == folium.notes', group: '3_workspace@1' },
+    { command: 'folium.refresh', when: 'view == folium.notes', group: '3_workspace@2' },
+    { command: 'folium.openPrivateFolder', when: 'view == folium.notes', group: '3_workspace@3' },
+    { command: 'folium.openTemplatesFolder', when: 'view == folium.notes', group: '3_workspace@4' },
+    { command: 'folium.emptyTrash', when: 'view == folium.notes', group: '3_workspace@5' },
+    { command: 'folium.openSettings', when: 'view == folium.notes', group: '3_workspace@6' },
+    { command: 'folium.showLog', when: 'view == folium.notes', group: '3_workspace@7' },
+    { command: 'folium.importNotes', when: 'view == folium.notes', group: '4_io@1' },
+    { command: 'folium.exportNotes', when: 'view == folium.notes', group: '4_io@2' },
+    { command: 'folium.backupPrivate', when: 'view == folium.notes', group: '4_io@3' },
+    { command: 'folium.restorePrivate', when: 'view == folium.notes', group: '4_io@4' },
     { command: 'folium.clearFilters', when: 'view == folium.tags', group: 'navigation@1' },
     { command: 'folium.refresh', when: 'view == folium.tags', group: 'navigation@2' },
     { command: 'folium.tasksGroupBy', when: 'view == folium.tasks', group: 'navigation@1' },
     { command: 'folium.toggleDoneTasks', when: 'view == folium.tasks', group: 'navigation@2' },
     { command: 'folium.refresh', when: 'view == folium.tasks', group: 'navigation@3' },
     { command: 'folium.refresh', when: 'view == folium.related', group: 'navigation@1' },
+    { command: 'folium.newPromptNote', when: 'view == folium.ai', group: 'navigation@1' },
+    { command: 'folium.connectAITools', when: 'view == folium.ai', group: 'navigation@2' },
+    { command: 'folium.refresh', when: 'view == folium.ai', group: 'navigation@3' },
+    { command: 'folium.refresh', when: 'view == folium.commands', group: 'navigation@1' },
   ],
   'view/item/context': [
+    // Inline icons on a note row.
     { command: 'folium.setColor', when: 'viewItem =~ /^folium\\.note/', group: 'inline@1' },
     { command: 'folium.togglePin', when: 'viewItem =~ /^folium\\.note/', group: 'inline@2' },
     { command: 'folium.sendPrompt', when: 'viewItem =~ /^folium\\.note/', group: 'inline@3' },
     { command: 'folium.trashNote', when: 'viewItem =~ /^folium\\.note/', group: 'inline@4' },
-    { command: 'folium.renameNote', when: 'viewItem =~ /^folium\\.note/', group: '1_note@1' },
-    { command: 'folium.duplicateNote', when: 'viewItem =~ /^folium\\.note/', group: '1_note@2' },
-    { command: 'folium.moveNote', when: 'viewItem =~ /^folium\\.note/', group: '1_note@3' },
-    { command: 'folium.archive', when: 'viewItem =~ /^folium\\.note(?!\\.archived)/', group: '1_note@4' },
-    { command: 'folium.unarchive', when: 'viewItem == folium.note.archived || viewItem =~ /^folium\\.note\\.archived/', group: '1_note@5' },
-    { command: 'folium.updateCodeLinks', when: 'viewItem =~ /^folium\\.note/', group: '2_code@1' },
-    { command: 'folium.saveAsTemplate', when: 'viewItem =~ /^folium\\.note/', group: '3_templates@1' },
-    { command: 'folium.encryptNote', when: 'viewItem =~ /^folium\\.note/', group: '4_security@1' },
-    { command: 'folium.decryptNote', when: 'viewItem == folium.note.encrypted', group: '4_security@2' },
-    { command: 'folium.createIssue', when: 'viewItem =~ /^folium\\.note/', group: '5_issues@1' },
+    // Right-click menu (different groups become separators).
+    { command: 'folium.openNote', when: 'viewItem =~ /^folium\\.note/', group: '1_open@1' },
+    { command: 'folium.renameNote', when: 'viewItem =~ /^folium\\.note/', group: '1_open@2' },
+    { command: 'folium.editTags', when: 'viewItem =~ /^folium\\.note/', group: '2_props@1' },
+    { command: 'folium.setColor', when: 'viewItem =~ /^folium\\.note/', group: '2_props@2' },
+    { command: 'folium.togglePin', when: 'viewItem =~ /^folium\\.note/', group: '2_props@3' },
+    { command: 'folium.moveToPrivate', when: 'viewItem =~ /^folium\\.note\\.shared/', group: '3_scope@1' },
+    { command: 'folium.moveToShared', when: 'viewItem =~ /^folium\\.note\\.private/', group: '3_scope@2' },
+    {
+      command: 'folium.archive',
+      when: 'viewItem =~ /^folium\\.note\\.(shared|private)(\\.encrypted)?$/',
+      group: '3_scope@3',
+    },
+    { command: 'folium.unarchive', when: 'viewItem =~ /^folium\\.note\\..*\\.archived$/', group: '3_scope@4' },
+    { command: 'folium.copyNoteLink', when: 'viewItem =~ /^folium\\.note/', group: '4_copy@1' },
+    { command: 'folium.copyNotePath', when: 'viewItem =~ /^folium\\.note/', group: '4_copy@2' },
+    { command: 'folium.revealNote', when: 'viewItem =~ /^folium\\.note/', group: '4_copy@3' },
+    { command: 'folium.saveAsTemplate', when: 'viewItem =~ /^folium\\.note/', group: '5_tools@1' },
+    { command: 'folium.updateCodeLinks', when: 'viewItem =~ /^folium\\.note/', group: '5_tools@2' },
+    { command: 'folium.createIssue', when: 'viewItem =~ /^folium\\.note/', group: '5_tools@3' },
+    { command: 'folium.linkIssue', when: 'viewItem =~ /^folium\\.note/', group: '5_tools@4' },
+    { command: 'folium.sendToJoplin', when: 'viewItem =~ /^folium\\.note/', group: '5_tools@5' },
+    { command: 'folium.trashNote', when: 'viewItem =~ /^folium\\.note/', group: '6_delete@1' },
+    // AI view.
+    { command: 'folium.sendPrompt', when: 'viewItem == folium.aiNote', group: 'inline@1' },
+    { command: 'folium.openNote', when: 'viewItem == folium.aiNote', group: '1_open@1' },
+    { command: 'folium.renameNote', when: 'viewItem == folium.aiNote', group: '1_open@2' },
+    // Commands view.
+    { command: 'folium.runCommand', when: 'viewItem == folium.terminalCommand', group: 'inline@1' },
+    { command: 'folium.copyTerminalCommand', when: 'viewItem == folium.terminalCommand', group: '1_copy@1' },
+    // Trash, tags and active filters.
     { command: 'folium.restoreTrash', when: 'viewItem == folium.trashEntry', group: 'inline@1' },
     { command: 'folium.deleteTrashEntry', when: 'viewItem == folium.trashEntry', group: 'inline@2' },
     { command: 'folium.renameTag', when: 'viewItem == folium.tag', group: 'inline@1' },
@@ -206,7 +278,12 @@ export const MENUS: Record<string, MenuItem[]> = {
     { command: 'folium.sendLineToTerminal', when: 'folium.isNote', group: 'navigation@0' },
     { command: 'folium.saveAsTemplate', when: 'folium.isNote', group: 'navigation@2' },
   ],
-  commandPalette: [{ command: 'folium.newNoteWithTitle', when: 'false' }, { command: 'folium.openNote', when: 'false' }],
+  commandPalette: [
+    { command: 'folium.newNoteWithTitle', when: 'false' },
+    { command: 'folium.openNote', when: 'false' },
+    { command: 'folium.runCommand', when: 'false' },
+    { command: 'folium.copyTerminalCommand', when: 'false' },
+  ],
 };
 
 export const KEYBINDINGS: KeybindingDef[] = [
@@ -255,7 +332,7 @@ export const CONFIGURATION: Record<string, ConfigProperty> = {
     default: 'ask',
     scope: 'window',
     order: 4,
-    markdownDescription: 'Scope used by **New Note** (and whether it asks).',
+    markdownDescription: 'Preselected scope (shown first, marked **default**) in the **New Note** question. The question is always asked.',
   },
   'foliumNotes.fileNamePattern': {
     type: 'string',
@@ -540,12 +617,14 @@ export const WALKTHROUGHS = [
 ];
 
 export const MANIFEST = {
-  commands: COMMANDS,
+  commands: COMMANDS.map((command) => ({ ...command, category: command.category ?? CATEGORY })),
   viewsContainers: { activitybar: [VIEWS_CONTAINER] },
   views: { folium: VIEWS },
   viewsWelcome: VIEWS_WELCOME,
   menus: MENUS,
   keybindings: KEYBINDINGS,
   configuration: CONFIGURATION,
+  /** View header actions (New, Search, …) stay visible instead of appearing on hover. */
+  configurationDefaults: { 'workbench.view.alwaysShowHeaderActions': true },
   walkthroughs: WALKTHROUGHS,
 };

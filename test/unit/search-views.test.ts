@@ -170,6 +170,14 @@ describe('views', () => {
     expect(matchesFilters(notes[2], { ...emptyFilters(), datePreset: 'last7' }, now)).toBe(false);
   });
 
+  it('filters by title text', () => {
+    expect(applyFilters(notes, { ...emptyFilters(), title: 'yester' }, now).map((item) => item.title)).toEqual([
+      'Yesterday note',
+    ]);
+    expect(applyFilters(notes, { ...emptyFilters(), title: 'NOTE' }, now)).toHaveLength(3);
+    expect(applyFilters(notes, { ...emptyFilters(), title: 'missing' }, now)).toHaveLength(0);
+  });
+
   it('summarises active filters', () => {
     expect(filterSummary({ ...emptyFilters(), tags: ['a', 'b'], colors: ['red'], datePreset: 'last7', text: 'x' })).toBe(
       'tags (any): a, b · colors: red · last 7 days · text: “x”',

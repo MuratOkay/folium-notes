@@ -17,7 +17,9 @@ they belong:
 * **Private notes** are Markdown files in `~/FoliumNotes/<project>` — outside the repository, never
   committed, never pushed. Perfect for credentials, half-formed ideas and “why does this fail on
   staging?”.
-* **One view** merges both, without ever leaking private notes into shared ones.
+* **One view** merges both, without ever leaking private notes into shared ones — Shared and Private are
+  always the two roots of the Notes tree. Five more views sit next to it: Tags, Tasks, Related, AI and
+  Commands (terminal commands found in your notes).
 
 ![Notes view](https://raw.githubusercontent.com/MuratOkay/folium-notes/main/images/screenshot-notes.png)
 

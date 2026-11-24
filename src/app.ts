@@ -12,6 +12,8 @@ import { NotesTreeProvider } from './ui/notesTree';
 import { TagsTreeProvider } from './ui/tagsTree';
 import { TasksTreeProvider } from './ui/tasksTree';
 import { RelatedTreeProvider } from './ui/relatedTree';
+import { AiTreeProvider } from './ui/aiTree';
+import { CommandsTreeProvider } from './ui/commandsTree';
 import { StatusBarController } from './ui/statusBar';
 import { registerEditorFeatures } from './ui/editor';
 import { registerCommands } from './commands';
@@ -35,6 +37,8 @@ export class FoliumApp implements vscode.Disposable {
   tagsTree: TagsTreeProvider;
   tasksTree: TasksTreeProvider;
   relatedTree: RelatedTreeProvider;
+  aiTree: AiTreeProvider;
+  commandsTree: CommandsTreeProvider;
   statusBar: StatusBarController;
   private treeViews: vscode.TreeView<unknown>[] = [];
   private disposables: vscode.Disposable[] = [];
@@ -58,6 +62,8 @@ export class FoliumApp implements vscode.Disposable {
     this.tagsTree = new TagsTreeProvider(this);
     this.tasksTree = new TasksTreeProvider(this);
     this.relatedTree = new RelatedTreeProvider(this);
+    this.aiTree = new AiTreeProvider(this);
+    this.commandsTree = new CommandsTreeProvider(this);
     this.statusBar = new StatusBarController(this);
   }
 
@@ -86,6 +92,7 @@ export class FoliumApp implements vscode.Disposable {
 
   private async doActivate(): Promise<void> {
     this.context.subscriptions.push(this.output);
+    this.log(`Folium Notes ${this.context.extension.packageJSON.version as string} starting`);
     this.context.subscriptions.push(
       vscode.workspace.registerFileSystemProvider(SECURE_SCHEME, this.secureFs, {
         isCaseSensitive: true,
@@ -109,6 +116,8 @@ export class FoliumApp implements vscode.Disposable {
     await this.restart();
     this.ready = true;
     this.statusBar.update();
+    const version = this.context.extension.packageJSON.version as string;
+    void vscode.window.setStatusBarMessage(`Folium Notes ${version} active`, 4000);
     await this.showRemoteNotice();
     if (!(await this.keys.has())) {
       void this.maybeWarnMissingKey();
@@ -118,7 +127,7 @@ export class FoliumApp implements vscode.Disposable {
   private registerTreeViews(): void {
     const notes = vscode.window.createTreeView('folium.notes', {
       treeDataProvider: this.notesTree,
-      showCollapseAll: true,
+      showCollapseAll: false,
       canSelectMany: true,
       dragAndDropController: this.notesTree,
     });
@@ -134,11 +143,19 @@ export class FoliumApp implements vscode.Disposable {
       treeDataProvider: this.relatedTree,
       showCollapseAll: true,
     });
-    this.treeViews = [notes, tags, tasks, related] as unknown as vscode.TreeView<unknown>[];
+    const ai = vscode.window.createTreeView('folium.ai', {
+      treeDataProvider: this.aiTree,
+      showCollapseAll: true,
+    });
+    const commands = vscode.window.createTreeView('folium.commands', {
+      treeDataProvider: this.commandsTree,
+      showCollapseAll: true,
+    });
+    this.treeViews = [notes, tags, tasks, related, ai, commands] as unknown as vscode.TreeView<unknown>[];
     this.notesTree.attach(notes);
     this.tagsTree.attach(tags);
     this.tasksTree.attach(tasks);
-    this.context.subscriptions.push(notes, tags, tasks, related);
+    this.context.subscriptions.push(notes, tags, tasks, related, ai, commands);
   }
 
   async restart(): Promise<void> {
@@ -314,6 +331,8 @@ export class FoliumApp implements vscode.Disposable {
     this.tagsTree.refresh();
     this.tasksTree.refresh();
     this.relatedTree.refresh();
+    this.aiTree.refresh();
+    this.commandsTree.refresh();
     this.statusBar.update();
   }
 

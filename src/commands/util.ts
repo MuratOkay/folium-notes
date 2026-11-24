@@ -64,24 +64,31 @@ export async function pickScope(
   options: { placeHolder?: string; allowBoth?: boolean; default?: Scope } = {},
 ): Promise<Scope | undefined> {
   const configured = app.settings.defaultScope;
-  if (configured === 'shared' || configured === 'private') {
-    return options.default ?? configured;
-  }
-  const picked = await vscode.window.showQuickPick(
-    [
-      {
-        label: '$(folder) Shared note',
-        description: 'in the project (.notes), committed with the code',
-        value: 'shared' as Scope,
-      },
-      {
-        label: '$(lock) Private note',
-        description: 'outside the repository, never committed',
-        value: 'private' as Scope,
-      },
-    ],
-    { placeHolder: options.placeHolder ?? 'Where should the note live?' },
-  );
+  const preferred =
+    options.default ?? (configured === 'shared' || configured === 'private' ? configured : undefined);
+  const choices = [
+    {
+      label: '$(folder) Shared note',
+      description: 'in the project (.notes), committed with the code',
+      value: 'shared' as Scope,
+    },
+    {
+      label: '$(lock) Private note',
+      description: 'outside the repository, never committed',
+      value: 'private' as Scope,
+    },
+  ];
+  const ordered =
+    preferred === 'private' ? [choices[1], choices[0]] : choices;
+  const items = ordered.map((choice) => ({
+    ...choice,
+    description:
+      choice.value === preferred ? `${choice.description} · default` : choice.description,
+  }));
+  const picked = await vscode.window.showQuickPick(items, {
+    placeHolder: options.placeHolder ?? 'Where should the note live?',
+    title: 'Shared or private?',
+  });
   return picked?.value;
 }
 

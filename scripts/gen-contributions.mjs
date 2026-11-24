@@ -41,6 +41,7 @@ pkg.contributes = {
     title: 'Folium Notes',
     properties: MANIFEST.configuration,
   },
+  configurationDefaults: MANIFEST.configurationDefaults,
   walkthroughs: MANIFEST.walkthroughs,
 };
 

@@ -16,15 +16,16 @@ import {
 } from '../core/views';
 import type { TrashEntry } from '../core/trash';
 import { formatDisplay } from '../core/time';
+import type { Scope } from '../core/state';
 
 export type NotesNode =
+  | { kind: 'scope'; scope: Scope }
   | { kind: 'note'; key: string; groupId?: string }
-  | { kind: 'group'; group: NoteGroup }
-  | { kind: 'tagGroup'; tag: string; label: string; depth: number }
+  | { kind: 'group'; group: NoteGroup; scope?: Scope }
+  | { kind: 'tagGroup'; tag: string; label: string; depth: number; scope?: Scope }
   | { kind: 'trash' }
   | { kind: 'trashEntry'; entry: TrashEntry }
   | { kind: 'filters' }
-  | { kind: 'empty' }
   | { kind: 'message'; label: string; description?: string };
 
 export const NOTES_MIME = 'application/vnd.code.tree.folium.notes';
@@ -89,6 +90,8 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
   }
 
   nodeForNote(note: NoteSummary): NotesNode {
+    const state = this.app.viewStateStore.get();
+    if (state.groupBy === 'none' || state.groupBy === 'scope') return this.noteNode(note.key);
     const group = this.groups().find((candidate) =>
       candidate.notes.some((item) => item.key === note.key),
     );
@@ -104,6 +107,33 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
     }
   }
 
+  /** Shared and Private are always the two roots so the scope of every note is visible. */
+  private scopeChildren(scope: Scope): NotesNode[] {
+    const state = this.app.viewStateStore.get();
+    const notes = this.visibleNotes().filter((note) => note.scope === scope && !note.archived);
+    if (notes.length === 0) {
+      return [{ kind: 'message', label: `No ${scope} notes` }];
+    }
+    if (state.groupBy === 'none' || state.groupBy === 'scope') {
+      return notes.map((note) => this.noteNode(note.key));
+    }
+    if (state.groupBy === 'tag') {
+      return [...this.tagRoots(notes, scope), ...this.untagged(notes)];
+    }
+    const groups = groupNotes(notes, state.groupBy)
+      .filter((group) => group.section !== 'archive')
+      .map((group) => ({
+        ...group,
+        notes: sortNotes(group.notes, state.sortBy, state.sortOrder, true),
+      }));
+    return groups.map((group) => ({ kind: 'group' as const, group, scope }));
+  }
+
+  /** Notes without tags are listed directly under the scope in tag mode. */
+  private untagged(notes: NoteFile[]): NotesNode[] {
+    return notes.filter((note) => note.tags.length === 0).map((note) => this.noteNode(note.key));
+  }
+
   getChildren(node?: NotesNode): NotesNode[] {
     const store = this.store;
     if (!store) {
@@ -113,34 +143,27 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
       const state = this.app.viewStateStore.get();
       const out: NotesNode[] = [];
       if (hasActiveFilters(state.filters)) out.push({ kind: 'filters' });
-      const groups = this.groups();
-      const hasAny = store.allNotes.length > 0;
-      if (!hasAny) return [{ kind: 'empty' }];
-      if (groups.length === 0) {
-        out.push({ kind: 'message', label: 'No notes match the current filters' });
-      }
-      if (state.groupBy === 'tag') {
-        out.push(...this.tagRoots());
-        const archive = groups.find((group) => group.section === 'archive');
-        if (archive) out.push({ kind: 'group', group: archive });
-      } else {
-        for (const group of groups) out.push({ kind: 'group', group });
-      }
+      if (store.allNotes.length === 0) return [{ kind: 'message', label: 'No notes yet' }];
+      out.push({ kind: 'scope', scope: 'shared' }, { kind: 'scope', scope: 'private' });
+      const archive = this.groups().find((group) => group.section === 'archive');
+      if (archive) out.push({ kind: 'group', group: archive });
       if (store.trashEntries.length > 0) out.push({ kind: 'trash' });
       return out;
     }
+    if (node.kind === 'scope') return this.scopeChildren(node.scope);
     if (node.kind === 'group') {
       return node.group.notes.map((note) => this.noteNode(note.key, node.group.id));
     }
     if (node.kind === 'tagGroup') {
-      const childTags = this.tagChildren(node.tag);
-      const notes = this.notesWithTag(node.tag);
+      const childTags = this.tagChildren(node.tag, node.scope);
+      const notes = this.notesWithTag(node.tag, node.scope);
       return [
         ...childTags.map((tag) => ({
           kind: 'tagGroup' as const,
           tag,
           label: tag.split('/').pop() ?? tag,
           depth: tag.split('/').length - 1,
+          scope: node.scope,
         })),
         ...notes.map((note) => this.noteNode(note.key, `tag-${node.tag}`)),
       ];
@@ -153,42 +176,53 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
 
   getParent(node: NotesNode): NotesNode | undefined {
     if (node.kind === 'note') {
-      const group = node.groupId
-        ? this.groups().find((candidate) => candidate.id === node.groupId)
-        : this.groups().find((candidate) => candidate.notes.some((note) => note.key === node.key));
-      return group ? { kind: 'group', group } : undefined;
+      const note = this.store?.byKey(node.key);
+      if (!node.groupId) return note ? { kind: 'scope', scope: note.scope } : undefined;
+      if (node.groupId.startsWith('tag-')) {
+        const tag = node.groupId.slice('tag-'.length);
+        return { kind: 'tagGroup', tag, label: tag.split('/').pop() ?? tag, depth: tag.split('/').length - 1, scope: note?.scope };
+      }
+      const group = this.groups().find((candidate) => candidate.id === node.groupId);
+      if (group?.id === 'archive') return { kind: 'group', group };
+      return group
+        ? { kind: 'group', group, scope: note?.scope }
+        : note
+          ? { kind: 'scope', scope: note.scope }
+          : undefined;
     }
     if (node.kind === 'tagGroup') {
       const parts = node.tag.split('/');
-      if (parts.length <= 1) return undefined;
+      if (parts.length <= 1) return node.scope ? { kind: 'scope', scope: node.scope } : undefined;
       const parentTag = parts.slice(0, -1).join('/');
-      return { kind: 'tagGroup', tag: parentTag, label: parts[parts.length - 2], depth: parts.length - 2 };
+      return {
+        kind: 'tagGroup',
+        tag: parentTag,
+        label: parts[parts.length - 2],
+        depth: parts.length - 2,
+        scope: node.scope,
+      };
     }
+    if (node.kind === 'group' && node.scope) return { kind: 'scope', scope: node.scope };
     if (node.kind === 'trashEntry') return { kind: 'trash' };
     return undefined;
   }
 
   /** Top-level tag nodes (tags without a parent). */
-  private tagRoots(): NotesNode[] {
-    const cached = this.memo.get('tagRoots');
-    if (cached) return cached as NotesNode[];
+  private tagRoots(notes: NoteFile[], scope?: Scope): NotesNode[] {
     const tags = new Set<string>();
-    for (const note of this.visibleNotes()) {
-      if (note.archived) continue;
+    for (const note of notes) {
       for (const tag of note.tags) tags.add(tag.split('/')[0]);
     }
-    const roots = [...tags]
+    return [...tags]
       .sort((a, b) => a.localeCompare(b))
-      .map((tag) => ({ kind: 'tagGroup' as const, tag, label: tag, depth: 0 }));
-    this.memo.set('tagRoots', roots);
-    return roots;
+      .map((tag) => ({ kind: 'tagGroup' as const, tag, label: tag, depth: 0, scope }));
   }
 
-  private tagChildren(tag: string): string[] {
+  private tagChildren(tag: string, scope?: Scope): string[] {
     const prefix = `${tag}/`;
     const children = new Set<string>();
     for (const note of this.visibleNotes()) {
-      if (note.archived) continue;
+      if (note.archived || (scope && note.scope !== scope)) continue;
       for (const candidate of note.tags) {
         if (!candidate.startsWith(prefix)) continue;
         const rest = candidate.slice(prefix.length);
@@ -199,10 +233,12 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
     return [...children].sort((a, b) => a.localeCompare(b));
   }
 
-  private notesWithTag(tag: string): NoteFile[] {
+  private notesWithTag(tag: string, scope?: Scope): NoteFile[] {
     const state = this.app.viewStateStore.get();
     return sortNotes(
-      this.visibleNotes().filter((note) => !note.archived && note.tags.includes(tag)),
+      this.visibleNotes().filter(
+        (note) => !note.archived && note.tags.includes(tag) && (!scope || note.scope === scope),
+      ),
       state.sortBy,
       state.sortOrder,
       true,
@@ -212,9 +248,25 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
   getTreeItem(node: NotesNode): vscode.TreeItem {
     const store = this.store;
     switch (node.kind) {
+      case 'scope': {
+        const notes = this.visibleNotes().filter((note) => note.scope === node.scope && !note.archived);
+        const item = new vscode.TreeItem(
+          node.scope === 'shared' ? 'Shared' : 'Private',
+          vscode.TreeItemCollapsibleState.Expanded,
+        );
+        item.description = String(notes.length);
+        item.iconPath = new vscode.ThemeIcon(node.scope === 'shared' ? 'globe' : 'lock');
+        item.contextValue = `folium.scope.${node.scope}`;
+        item.id = `scope:${node.scope}`;
+        item.tooltip =
+          node.scope === 'shared'
+            ? 'Shared notes live in the project folder and are committed with the code'
+            : 'Private notes live outside the repository and are never committed';
+        return item;
+      }
       case 'tagGroup': {
-        const children = this.tagChildren(node.tag);
-        const notes = this.notesWithTag(node.tag);
+        const children = this.tagChildren(node.tag, node.scope);
+        const notes = this.notesWithTag(node.tag, node.scope);
         const item = new vscode.TreeItem(
           node.label,
           children.length > 0 || notes.length > 0
@@ -224,7 +276,7 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
         item.description = String(notes.length);
         item.iconPath = new vscode.ThemeIcon('tag');
         item.contextValue = 'folium.tagGroup';
-        item.id = `tagGroup:${node.tag}`;
+        item.id = `tagGroup:${node.scope ?? 'all'}:${node.tag}`;
         item.tooltip = `#${node.tag} — ${notes.length} note(s)`;
         item.accessibilityInformation = { label: `Tag ${node.tag}, ${notes.length} notes` };
         item.command = {
@@ -243,7 +295,7 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
         );
         item.description = String(node.group.notes.length);
         item.contextValue = 'folium.group';
-        item.id = `group:${node.group.id}`;
+        item.id = `group:${node.scope ?? 'all'}:${node.group.id}`;
         const id = node.group.id;
         if (id.startsWith('color-')) {
           const color = id.slice('color-'.length);
@@ -271,7 +323,7 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
         item.id = `note:${note.key}`;
         item.resourceUri = vscode.Uri.file(note.absPath);
         item.description = this.app.settings.treeDescription ? this.noteDescription(note, state.sortBy) : undefined;
-        item.contextValue = `folium.note${note.encrypted ? '.encrypted' : ''}${note.archived ? '.archived' : ''}`;
+        item.contextValue = `folium.note.${note.scope}${note.encrypted ? '.encrypted' : ''}${note.archived ? '.archived' : ''}`;
         item.iconPath = this.noteIcon(note);
         item.command = {
           command: 'folium.openNote',
@@ -308,14 +360,6 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
         item.iconPath = new vscode.ThemeIcon('trash');
         item.contextValue = 'folium.trashEntry';
         item.tooltip = `Restore to ${node.entry.originalPath}`;
-        return item;
-      }
-      case 'empty': {
-        const item = new vscode.TreeItem('No notes yet');
-        item.description = 'Create a shared or private note';
-        item.iconPath = new vscode.ThemeIcon('book');
-        item.command = { command: 'folium.newSharedNote', title: 'New Shared Note' };
-        item.contextValue = 'folium.empty';
         return item;
       }
       default: {
@@ -398,24 +442,14 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
       this.app.refresh();
       return;
     }
+    if (target.kind === 'scope') {
+      await this.moveToScope(notes, target.scope);
+      return;
+    }
     if (target.kind !== 'group') return;
     const id = target.group.id;
     if (id === 'shared' || id === 'private') {
-      const blocked = notes.filter((note) => note.sensitive && id === 'shared');
-      if (blocked.length > 0) {
-        void vscode.window.showWarningMessage('Sensitive notes can never be shared.');
-        return;
-      }
-      const answer = await vscode.window.showWarningMessage(
-        `Move ${notes.length} note(s) to ${id} notes?`,
-        { modal: true },
-        'Move',
-      );
-      if (answer !== 'Move') return;
-      for (const note of notes) {
-        if (note.scope !== id) await store.moveNote(note, id as 'shared' | 'private');
-      }
-      this.app.refresh();
+      await this.moveToScope(notes, id);
       return;
     }
     if (id.startsWith('color-')) {
@@ -438,5 +472,27 @@ export class NotesTreeProvider implements vscode.TreeDataProvider<NotesNode>, vs
       for (const note of notes) await store.setArchived(note, true);
       this.app.refresh();
     }
+  }
+
+  /** Drag & drop onto the Shared or Private root. */
+  private async moveToScope(notes: NoteFile[], scope: Scope): Promise<void> {
+    const store = this.store;
+    if (!store) return;
+    if (notes.every((note) => note.scope === scope)) return;
+    const blocked = notes.filter((note) => note.sensitive && scope === 'shared');
+    if (blocked.length > 0) {
+      void vscode.window.showWarningMessage('Sensitive notes can never be shared.');
+      return;
+    }
+    const answer = await vscode.window.showWarningMessage(
+      `Move ${notes.length} note(s) to ${scope} notes?`,
+      { modal: true },
+      'Move',
+    );
+    if (answer !== 'Move') return;
+    for (const note of notes) {
+      if (note.scope !== scope) await store.moveNote(note, scope);
+    }
+    this.app.refresh();
   }
 }
