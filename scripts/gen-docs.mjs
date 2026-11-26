@@ -21,7 +21,12 @@ const HIDDEN = new Set([
   'folium.deleteTrashEntry',
 ]);
 
-const cell = (value) => String(value).replace(/\|/g, '\\|').replace(/\r?\n/g, ' ').trim();
+const cell = (value) =>
+  String(value)
+    .replace(/\\/g, '\\\\')
+    .replace(/\|/g, '\\|')
+    .replace(/\r?\n/g, ' ')
+    .trim();
 const defaultText = (value) => {
   if (typeof value === 'string') return value === '' ? '""' : JSON.stringify(value);
   return JSON.stringify(value);
