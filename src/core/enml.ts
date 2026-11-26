@@ -89,6 +89,10 @@ export function sanitizeEnml(enml: string): string {
     allowedSchemesByTag: { img: ['http', 'https'] },
     allowProtocolRelative: false,
     disallowedTagsMode: 'discard',
+    allowedClasses: {
+      code: ['language-*', 'lang-*'],
+      pre: ['language-*', 'lang-*'],
+    },
     nonTextTags: ['style', 'script', 'textarea', 'option', 'noscript', 'iframe', 'object', 'embed', 'svg', 'math'],
   });
 }

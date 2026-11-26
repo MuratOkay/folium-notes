@@ -57,6 +57,17 @@ describe('ENML sanitization', () => {
     expect(md).not.toMatch(/<script|<iframe|<svg|<math/i);
   });
 
+  it('keeps TypeScript code as text and only language-* classes on code/pre', () => {
+    const clean = sanitizeEnml(
+      '<en-note><pre><code class="language-ts evil">const answer: number = 42;</code></pre><script type="text/typescript">const evil = 1;</script></en-note>',
+    );
+    expect(clean).toContain('const answer: number = 42;');
+    expect(clean).toContain('class="language-ts"');
+    expect(clean).not.toContain('evil');
+    expect(clean).not.toContain('const evil');
+    expect(clean).not.toMatch(/<script/i);
+  });
+
   it('sanitizes .enex imports end to end', () => {
     const enex = [
       '<?xml version="1.0" encoding="UTF-8"?>',

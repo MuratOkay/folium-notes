@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.0.6
+
+* Sanitizer: keep safe `language-*`/`lang-*` classes on `<pre>`/`<code>` so imported
+  TypeScript (and other languages) retains its syntax hint; every other class is
+  still stripped and `<script type="text/typescript">` blocks are removed.
+  Added a test for TypeScript code in HTML imports (211 tests total).
+
 ## 1.0.5
 
 * Security: untrusted ENML/HTML from `.enex` imports is now sanitized with
