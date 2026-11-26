@@ -2,12 +2,12 @@
   "name": "folium-notes",
   "displayName": "Folium Notes",
   "description": "Project notes for developers: shared notes in the repo, private notes outside it, in one view.",
-  "version": "1.0.2",
+  "version": "1.0.3",
   "publisher": "folium",
   "license": "MIT",
   "engines": {
     "vscode": "^1.90.0",
-    "node": ">=20"
+    "node": ">=20.19"
   },
   "categories": [
     "Other",
@@ -62,14 +62,19 @@
   "dependencies": {
     "yaml": "^2.8.1"
   },
+  "overrides": {
+    "@vscode/vsce": {
+      "minimatch": "^11.0.1"
+    }
+  },
   "devDependencies": {
     "@types/node": "^22.10.2",
     "@types/vscode": "^1.90.0",
     "@vscode/test-electron": "^2.4.1",
     "@vscode/vsce": "^4.1.1",
-    "esbuild": "^0.24.2",
+    "esbuild": "^0.28.2",
     "typescript": "^5.7.2",
-    "vitest": "^2.1.8"
+    "vitest": "^4.1.12"
   },
   "contributes": {
     "commands": [

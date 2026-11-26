@@ -1,5 +1,13 @@
 # Changelog
 
+## 1.0.3
+
+* Security (dev tooling): Vitest upgraded from 2.1.9 to 4.1.12, fixing
+  GHSA-5xrq-8626-4rwp (“When Vitest UI server is listening, arbitrary file can be read and executed”)
+  and the related `@vitest/mocker` advisories; Vite is 8.x and esbuild 0.28.2.
+* Security (packaging): the VSIX no longer includes the repository's `.notes/` folder or companion
+  archives; a fixed `minimatch` is pinned via an npm override. `npm audit` reports 0 vulnerabilities.
+
 ## 1.0.2
 
 * Tasks view: a task row now shows only its checkbox (the extra circle/check icon before the label is gone).

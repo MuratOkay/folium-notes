@@ -6,3 +6,4 @@ out/
 coverage/
 tmp/
 .folium-tmp/
+.notes/

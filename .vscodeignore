@@ -8,6 +8,9 @@ docs/**
 node_modules/**
 out/**
 tmp/**
+.notes/**
+dist/*.zip
+dist/*.vsix
 **/*.ts
 **/*.map
 **/tsconfig.json
