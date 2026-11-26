@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.4
+
+* Tooling refresh to current safe releases: TypeScript 7.0.2, Vitest 5.1.2 (Vite 8),
+  `@vscode/test-electron` 3.1.0, `@types/node` 22.20.7, yaml 2.9.1.
+* `@types/vscode` is intentionally pinned to **1.90.0** (the `engines.vscode` minimum) and
+  `@types/node` to the 22.x line (the supported/CI Node runtime); the newest 1.146/26.x typings
+  would allow APIs that older VS Code/Node versions cannot run.
+* esbuild 0.28.2, `@vscode/vsce` 4.1.1 and the minimatch 11.0.9 override remain; `npm audit` is clean.
+* Dev tooling now requires Node >=22.12 (Vitest 5 / test-electron 3); the extension itself still
+  supports VS Code ^1.90.0.
+
 ## 1.0.3
 
 * Security (dev tooling): Vitest upgraded from 2.1.9 to 4.1.12, fixing
