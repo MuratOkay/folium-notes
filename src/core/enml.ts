@@ -1,5 +1,7 @@
 /** Evernote ENML (XHTML) to Markdown conversion used by the .enex importer. */
 
+import sanitizeHtml from 'sanitize-html';
+
 const ENTITIES: Record<string, string> = {
   amp: '&',
   lt: '<',
@@ -38,13 +40,67 @@ function attr(tag: string, name: string): string | undefined {
   return match ? match[2] ?? match[3] : undefined;
 }
 
+/** Tags ENML needs on top of sanitize-html's XHTML defaults (en-note/en-todo/en-media). */
+const ALLOWED_TAGS = [
+  ...new Set([
+    ...sanitizeHtml.defaults.allowedTags,
+    'en-note',
+    'en-todo',
+    'en-media',
+    'img',
+    'center',
+    'font',
+    'u',
+    's',
+    'strike',
+    'sub',
+    'sup',
+    'mark',
+    'dl',
+    'dt',
+    'dd',
+    'figure',
+    'figcaption',
+  ]),
+];
+
+/** Attributes required for note content; no style/class/event handlers and no target/rel. */
+const ALLOWED_ATTRIBUTES = {
+  ...sanitizeHtml.defaults.allowedAttributes,
+  a: ['href', 'title'],
+  img: ['src', 'alt', 'title', 'width', 'height'],
+  'en-todo': ['checked'],
+  'en-media': ['hash', 'type', 'width', 'height'],
+  td: ['colspan', 'rowspan'],
+  th: ['colspan', 'rowspan'],
+};
+
+/**
+ * Sanitize untrusted ENML/HTML from an `.enex` import (or any HTML we convert).
+ * Scripts, styles, frames/objects/SVG/MathML, event-handler attributes and
+ * `javascript:`/`data:` URLs are removed; safe links, images and ENML
+ * checkboxes survive.
+ */
+export function sanitizeEnml(enml: string): string {
+  return sanitizeHtml(enml, {
+    allowedTags: ALLOWED_TAGS,
+    allowedAttributes: ALLOWED_ATTRIBUTES,
+    allowedSchemes: ['http', 'https', 'mailto'],
+    allowedSchemesByTag: { img: ['http', 'https'] },
+    allowProtocolRelative: false,
+    disallowedTagsMode: 'discard',
+    nonTextTags: ['style', 'script', 'textarea', 'option', 'noscript', 'iframe', 'object', 'embed', 'svg', 'math'],
+  });
+}
+
 /** Convert ENML/HTML body to Markdown (lists, links, pre, inline styles, checkboxes). */
 export function enmlToMarkdown(enml: string): string {
-  const source = enml
+  const cleaned = enml
     .replace(/<\?xml[\s\S]*?\?>/gi, '')
     .replace(/<!DOCTYPE[^>]*>/gi, '')
     .replace(/<en-note[^>]*>/gi, '')
     .replace(/<\/en-note>/gi, '');
+  const source = sanitizeEnml(cleaned);
   let out = '';
   let skipDepth = 0;
   const listStack: Array<'ul' | 'ol'> = [];
@@ -112,6 +168,7 @@ export function enmlToMarkdown(enml: string): string {
         break;
       }
       case 'en-todo': {
+        if (closing) break;
         const checked = (attr(match[0], 'checked') ?? '').toLowerCase() === 'true';
         out += checked ? '[x] ' : '[ ] ';
         break;
@@ -139,10 +196,11 @@ export function enmlToMarkdown(enml: string): string {
       case 'a': {
         if (closing) {
           const link = linkStack.pop();
-          if (link) out += `](${link.href})`;
+          if (link?.href) out += `](${link.href})`;
         } else {
-          linkStack.push({ href: attr(match[0], 'href') ?? '', text: '' });
-          out += '[';
+          const href = attr(match[0], 'href') ?? '';
+          linkStack.push({ href, text: '' });
+          if (href) out += '[';
         }
         break;
       }

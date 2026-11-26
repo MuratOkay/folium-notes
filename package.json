@@ -2,7 +2,7 @@
   "name": "folium-notes",
   "displayName": "Folium Notes",
   "description": "Project notes for developers: shared notes in the repo, private notes outside it, in one view.",
-  "version": "1.0.4",
+  "version": "1.0.5",
   "publisher": "folium",
   "license": "MIT",
   "engines": {
@@ -60,6 +60,7 @@
     "package:stable": "npm run build && node scripts/package.mjs --stable"
   },
   "dependencies": {
+    "sanitize-html": "^2.18.2",
     "yaml": "^2.9.1"
   },
   "overrides": {
@@ -69,6 +70,7 @@
   },
   "devDependencies": {
     "@types/node": "^22.20.7",
+    "@types/sanitize-html": "^2.16.2",
     "@types/vscode": "1.90.0",
     "@vscode/test-electron": "^3.1.0",
     "@vscode/vsce": "^4.1.1",

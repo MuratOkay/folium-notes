@@ -1,5 +1,16 @@
 # Changelog
 
+## 1.0.5
+
+* Security: untrusted ENML/HTML from `.enex` imports is now sanitized with
+  `sanitize-html` 2.18.2 before it is converted to Markdown. Scripts, styles,
+  iframes/objects/embeds, SVG/MathML, event-handler attributes and
+  `javascript:`/`data:`/protocol-relative URLs are removed; safe formatting,
+  links, images and ENML checkboxes survive.
+* Tests: five sanitization tests added (210 total) covering the sanitizer
+  directly, safe-content preservation, malicious Markdown conversion and an
+  end-to-end dirty `.enex` import.
+
 ## 1.0.4
 
 * Tooling refresh to current safe releases: TypeScript 7.0.2, Vitest 5.1.2 (Vite 8),
